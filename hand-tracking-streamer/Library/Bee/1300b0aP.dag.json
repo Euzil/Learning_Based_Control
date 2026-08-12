@@ -1,0 +1,2605 @@
+{
+  "Nodes": [
+    {
+      "Annotation": "all_tundra_nodes",
+      "DisplayName": null,
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [],
+      "OutputFlags": [],
+      "ToBuildDependencies": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "DebugActionIndex": 0
+    },
+    {
+      "Annotation": "WriteText Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.UnityAdditionalFile.txt",
+      "DisplayName": "Writing Unity.Multiplayer.Center.Common.UnityAdditionalFile.txt",
+      "ActionType": "WriteFile",
+      "PayloadOffset": 116,
+      "PayloadLength": 86,
+      "PayloadDebugContentSnippet": "/media/youran/SSD/Study/TUM/Ma",
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.UnityAdditionalFile.txt"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "DebugActionIndex": 1
+    },
+    {
+      "Annotation": "WriteText Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp",
+      "DisplayName": "Writing Unity.Multiplayer.Center.Common.rsp",
+      "ActionType": "WriteFile",
+      "PayloadOffset": 304,
+      "PayloadLength": 31376,
+      "PayloadDebugContentSnippet": "-target:library\n-out:\"Library/",
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "DebugActionIndex": 2
+    },
+    {
+      "Annotation": "WriteText Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp2",
+      "DisplayName": "Writing Unity.Multiplayer.Center.Common.rsp2",
+      "ActionType": "WriteFile",
+      "PayloadOffset": 31783,
+      "PayloadLength": 99,
+      "PayloadDebugContentSnippet": "/pathmap:\"/media/youran/SSD/St",
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp2"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "DebugActionIndex": 3
+    },
+    {
+      "Annotation": "Csc Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll (+2 others)",
+      "DisplayName": "Compiling C# (Unity.Multiplayer.Center.Common)",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetCoreRuntime/dotnet\" exec \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/DotNetSdkRoslyn/csc.dll\" /nostdlib /noconfig /shared \"@Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp\" \"@Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp2\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Core.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Data.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Drawing.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.IO.Compression.FileSystem.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Net.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Numerics.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Runtime.Serialization.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.ServiceModel.Web.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Transactions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Web.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Windows.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Xml.Linq.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Xml.Serialization.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.Xml.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/System.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/Microsoft.Win32.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.AppContext.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Buffers.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Collections.Concurrent.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Collections.NonGeneric.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Collections.Specialized.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Collections.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ComponentModel.EventBasedAsync.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ComponentModel.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ComponentModel.TypeConverter.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ComponentModel.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Console.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Data.Common.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.Contracts.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.Debug.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.FileVersionInfo.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.Process.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.StackTrace.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.TextWriterTraceListener.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.Tools.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.TraceSource.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Diagnostics.Tracing.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Drawing.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Dynamic.Runtime.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Globalization.Calendars.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Globalization.Extensions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Globalization.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.Compression.ZipFile.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.Compression.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.FileSystem.DriveInfo.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.FileSystem.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.FileSystem.Watcher.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.FileSystem.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.IsolatedStorage.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.MemoryMappedFiles.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.Pipes.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.UnmanagedMemoryStream.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.IO.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Linq.Expressions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Linq.Parallel.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Linq.Queryable.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Linq.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Memory.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Http.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.NameResolution.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.NetworkInformation.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Ping.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Requests.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Security.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.Sockets.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.WebHeaderCollection.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.WebSockets.Client.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Net.WebSockets.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Numerics.Vectors.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ObjectModel.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.DispatchProxy.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.Emit.ILGeneration.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.Emit.Lightweight.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.Emit.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.Extensions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Reflection.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Resources.Reader.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Resources.ResourceManager.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Resources.Writer.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.CompilerServices.VisualC.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Extensions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Handles.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.InteropServices.RuntimeInformation.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.InteropServices.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Numerics.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Serialization.Formatters.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Serialization.Json.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Serialization.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.Serialization.Xml.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Runtime.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Claims.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Cryptography.Algorithms.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Cryptography.Csp.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Cryptography.Encoding.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Cryptography.Primitives.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Cryptography.X509Certificates.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.Principal.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Security.SecureString.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Text.Encoding.Extensions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Text.Encoding.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Text.RegularExpressions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Overlapped.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Tasks.Extensions.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Tasks.Parallel.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Tasks.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Thread.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.ThreadPool.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.Timer.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Threading.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.ValueTuple.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.ReaderWriter.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XDocument.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XPath.XDocument.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XPath.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XmlDocument.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/System.Xml.XmlSerializer.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/ref/2.1.0/netstandard.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ARModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AnimationModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AssetBundleModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AudioModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ClothModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ContentLoadModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CoreModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CrashReportingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DSPGraphModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DirectorModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GameCenterModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GraphicsStateCollectionSerializerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GridModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HierarchyCoreModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HotReloadModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.IMGUIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ImageConversionModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputForUIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputLegacyModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.JSONSerializeModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.LocalizationModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MarshallingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MultiplayerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ParticleSystemModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PerformanceReportingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.Physics2DModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PhysicsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PropertiesModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ScreenCaptureModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ShaderVariantAnalyticsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SharedInternalsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteMaskModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteShapeModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.StreamingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubstanceModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubsystemsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TLSModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainPhysicsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreFontEngineModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreTextEngineModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextRenderingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TilemapModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIElementsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UmbraModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsCommonModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityConnectModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityCurlModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityTestProtocolModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAudioModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestTextureModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestWWWModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VFXModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VRModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VehiclesModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VideoModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.WindModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.XRModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.dll",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/AnswerData.cs",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/IOnboardingSection.cs",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/IOnboardingSectionAnalyticsProvider.cs",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/Preset.cs",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/SelectedSolutionsData.cs",
+        "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/StyleConstants.cs",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll",
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.rsp"
+      ],
+      "InputFlags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        8
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll",
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.pdb",
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.ref.dll"
+      ],
+      "OutputFlags": [
+        0,
+        0,
+        0
+      ],
+      "ToBuildDependencies": [
+        1,
+        2,
+        3,
+        76
+      ],
+      "ToUseDependencies": [
+        1,
+        3
+      ],
+      "AllowUnexpectedOutput": true,
+      "Env": [
+        {
+          "Key": "DOTNET_MULTILEVEL_LOOKUP",
+          "Value": "0"
+        }
+      ],
+      "CachingMode": "ByDirectInputs",
+      "DebugActionIndex": 4
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AIModule.dll_070F8BC1D337A75B.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AIModule.dll_070F8BC1D337A75B.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AIModule.dll_070F8BC1D337A75B.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 5
+    },
+    {
+      "Annotation": "ScriptAssemblies",
+      "DisplayName": null,
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [],
+      "OutputFlags": [],
+      "ToBuildDependencies": [
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        77,
+        78
+      ],
+      "DebugActionIndex": 6
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ARModule.dll_C08250C530550624.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ARModule.dll_C08250C530550624.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ARModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ARModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ARModule.dll_C08250C530550624.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 7
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AccessibilityModule.dll_2C2C1B32353BA5EF.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AccessibilityModule.dll_2C2C1B32353BA5EF.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AccessibilityModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AccessibilityModule.dll_2C2C1B32353BA5EF.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 8
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AndroidJNIModule.dll_96F311B033071A99.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AndroidJNIModule.dll_96F311B033071A99.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AndroidJNIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AndroidJNIModule.dll_96F311B033071A99.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 9
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AnimationModule.dll_24005E0F271AF0D5.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AnimationModule.dll_24005E0F271AF0D5.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AnimationModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AnimationModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AnimationModule.dll_24005E0F271AF0D5.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 10
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AssetBundleModule.dll_30821AE17CB9A4A3.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AssetBundleModule.dll_30821AE17CB9A4A3.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AssetBundleModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AssetBundleModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AssetBundleModule.dll_30821AE17CB9A4A3.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 11
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.AudioModule.dll_B4A10A8E54009487.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.AudioModule.dll_B4A10A8E54009487.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AudioModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.AudioModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AudioModule.dll_B4A10A8E54009487.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 12
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ClothModule.dll_1B8967892E1D736B.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ClothModule.dll_1B8967892E1D736B.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ClothModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ClothModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ClothModule.dll_1B8967892E1D736B.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 13
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ContentLoadModule.dll_C99874224B3C4C90.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ContentLoadModule.dll_C99874224B3C4C90.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ContentLoadModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ContentLoadModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ContentLoadModule.dll_C99874224B3C4C90.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 14
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.CoreModule.dll_8AC0A49F1922BB12.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.CoreModule.dll_8AC0A49F1922BB12.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CoreModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CoreModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.CoreModule.dll_8AC0A49F1922BB12.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 15
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.CrashReportingModule.dll_9449904B85F3EDEA.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.CrashReportingModule.dll_9449904B85F3EDEA.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CrashReportingModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.CrashReportingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.CrashReportingModule.dll_9449904B85F3EDEA.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 16
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.DSPGraphModule.dll_3F458052458F0ED0.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.DSPGraphModule.dll_3F458052458F0ED0.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DSPGraphModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DSPGraphModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.DSPGraphModule.dll_3F458052458F0ED0.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 17
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.DirectorModule.dll_39F41EE8D32E3DAF.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.DirectorModule.dll_39F41EE8D32E3DAF.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DirectorModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.DirectorModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.DirectorModule.dll_39F41EE8D32E3DAF.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 18
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.GIModule.dll_9F4BD4CF6EE68F75.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.GIModule.dll_9F4BD4CF6EE68F75.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GIModule.dll_9F4BD4CF6EE68F75.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 19
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.GameCenterModule.dll_C1405BCAF9480B8A.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.GameCenterModule.dll_C1405BCAF9480B8A.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GameCenterModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GameCenterModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GameCenterModule.dll_C1405BCAF9480B8A.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 20
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.GraphicsStateCollectionSerializerModule.dll_3F7CEFD40A23DAD7.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.GraphicsStateCollectionSerializerModule.dll_3F7CEFD40A23DAD7.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GraphicsStateCollectionSerializerModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GraphicsStateCollectionSerializerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GraphicsStateCollectionSerializerModule.dll_3F7CEFD40A23DAD7.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 21
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.GridModule.dll_6831C08D31775109.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.GridModule.dll_6831C08D31775109.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GridModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.GridModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GridModule.dll_6831C08D31775109.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 22
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.HierarchyCoreModule.dll_A346B80CA3E8FEE5.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.HierarchyCoreModule.dll_A346B80CA3E8FEE5.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HierarchyCoreModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HierarchyCoreModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.HierarchyCoreModule.dll_A346B80CA3E8FEE5.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 23
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.HotReloadModule.dll_A5491C15024E0C57.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.HotReloadModule.dll_A5491C15024E0C57.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HotReloadModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.HotReloadModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.HotReloadModule.dll_A5491C15024E0C57.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 24
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.IMGUIModule.dll_ED00A9F51A322868.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.IMGUIModule.dll_ED00A9F51A322868.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.IMGUIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.IMGUIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.IMGUIModule.dll_ED00A9F51A322868.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 25
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ImageConversionModule.dll_595F98C7EEEA7902.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ImageConversionModule.dll_595F98C7EEEA7902.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ImageConversionModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ImageConversionModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ImageConversionModule.dll_595F98C7EEEA7902.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 26
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.InputForUIModule.dll_C3F2B5E45968A846.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.InputForUIModule.dll_C3F2B5E45968A846.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputForUIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputForUIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputForUIModule.dll_C3F2B5E45968A846.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 27
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.InputLegacyModule.dll_C1C7360014AB5A94.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.InputLegacyModule.dll_C1C7360014AB5A94.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputLegacyModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputLegacyModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputLegacyModule.dll_C1C7360014AB5A94.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 28
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.InputModule.dll_1B16D23ECA38B92B.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.InputModule.dll_1B16D23ECA38B92B.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.InputModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputModule.dll_1B16D23ECA38B92B.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 29
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.JSONSerializeModule.dll_8C43A46E34770679.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.JSONSerializeModule.dll_8C43A46E34770679.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.JSONSerializeModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.JSONSerializeModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.JSONSerializeModule.dll_8C43A46E34770679.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 30
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.LocalizationModule.dll_1E768BD5577EB7DC.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.LocalizationModule.dll_1E768BD5577EB7DC.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.LocalizationModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.LocalizationModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.LocalizationModule.dll_1E768BD5577EB7DC.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 31
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.MarshallingModule.dll_D8EAB97660E1D1F5.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.MarshallingModule.dll_D8EAB97660E1D1F5.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MarshallingModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MarshallingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.MarshallingModule.dll_D8EAB97660E1D1F5.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 32
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.MultiplayerModule.dll_B02A376E3581321B.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.MultiplayerModule.dll_B02A376E3581321B.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MultiplayerModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.MultiplayerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.MultiplayerModule.dll_B02A376E3581321B.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 33
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ParticleSystemModule.dll_E75BD997F4057978.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ParticleSystemModule.dll_E75BD997F4057978.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ParticleSystemModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ParticleSystemModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ParticleSystemModule.dll_E75BD997F4057978.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 34
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.PerformanceReportingModule.dll_27C484A21CF5E1D1.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.PerformanceReportingModule.dll_27C484A21CF5E1D1.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PerformanceReportingModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PerformanceReportingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PerformanceReportingModule.dll_27C484A21CF5E1D1.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 35
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.Physics2DModule.dll_70A64DFFC817E86A.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.Physics2DModule.dll_70A64DFFC817E86A.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.Physics2DModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.Physics2DModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.Physics2DModule.dll_70A64DFFC817E86A.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 36
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.PhysicsModule.dll_F81CD12FDA722638.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.PhysicsModule.dll_F81CD12FDA722638.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PhysicsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PhysicsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PhysicsModule.dll_F81CD12FDA722638.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 37
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.PropertiesModule.dll_EE7B9B096C336FC6.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.PropertiesModule.dll_EE7B9B096C336FC6.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PropertiesModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.PropertiesModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PropertiesModule.dll_EE7B9B096C336FC6.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 38
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll_6F622451E3752D33.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll_6F622451E3752D33.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll_6F622451E3752D33.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 39
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ScreenCaptureModule.dll_A62B51F348E332DB.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ScreenCaptureModule.dll_A62B51F348E332DB.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ScreenCaptureModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ScreenCaptureModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ScreenCaptureModule.dll_A62B51F348E332DB.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 40
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.ShaderVariantAnalyticsModule.dll_16CE8F0BC87014D9.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.ShaderVariantAnalyticsModule.dll_16CE8F0BC87014D9.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ShaderVariantAnalyticsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.ShaderVariantAnalyticsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ShaderVariantAnalyticsModule.dll_16CE8F0BC87014D9.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 41
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.SharedInternalsModule.dll_DD70D79D66187452.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.SharedInternalsModule.dll_DD70D79D66187452.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SharedInternalsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SharedInternalsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SharedInternalsModule.dll_DD70D79D66187452.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 42
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteMaskModule.dll_AA6CCE5B1AB7A104.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteMaskModule.dll_AA6CCE5B1AB7A104.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteMaskModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteMaskModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteMaskModule.dll_AA6CCE5B1AB7A104.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 43
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteShapeModule.dll_49E3483C325BDCAD.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteShapeModule.dll_49E3483C325BDCAD.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteShapeModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SpriteShapeModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteShapeModule.dll_49E3483C325BDCAD.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 44
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.StreamingModule.dll_D8954B5F76A2A813.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.StreamingModule.dll_D8954B5F76A2A813.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.StreamingModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.StreamingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.StreamingModule.dll_D8954B5F76A2A813.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 45
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.SubstanceModule.dll_B5405FA8C1F5A621.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.SubstanceModule.dll_B5405FA8C1F5A621.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubstanceModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubstanceModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SubstanceModule.dll_B5405FA8C1F5A621.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 46
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.SubsystemsModule.dll_151A34BCE8FF8917.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.SubsystemsModule.dll_151A34BCE8FF8917.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubsystemsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.SubsystemsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SubsystemsModule.dll_151A34BCE8FF8917.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 47
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TLSModule.dll_A14C8CFA1A04290C.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TLSModule.dll_A14C8CFA1A04290C.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TLSModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TLSModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TLSModule.dll_A14C8CFA1A04290C.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 48
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainModule.dll_12634C9EB0306F26.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainModule.dll_12634C9EB0306F26.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainModule.dll_12634C9EB0306F26.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 49
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainPhysicsModule.dll_E7D6826B0D487405.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainPhysicsModule.dll_E7D6826B0D487405.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainPhysicsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TerrainPhysicsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainPhysicsModule.dll_E7D6826B0D487405.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 50
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreFontEngineModule.dll_B1BEE8F952F2B050.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreFontEngineModule.dll_B1BEE8F952F2B050.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreFontEngineModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreFontEngineModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreFontEngineModule.dll_B1BEE8F952F2B050.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 51
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreTextEngineModule.dll_F9A71F6AE276696E.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreTextEngineModule.dll_F9A71F6AE276696E.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreTextEngineModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextCoreTextEngineModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreTextEngineModule.dll_F9A71F6AE276696E.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 52
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TextRenderingModule.dll_CF6AC3FE001AB2D0.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TextRenderingModule.dll_CF6AC3FE001AB2D0.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextRenderingModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TextRenderingModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextRenderingModule.dll_CF6AC3FE001AB2D0.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 53
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.TilemapModule.dll_B15FB41FC7ED502F.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.TilemapModule.dll_B15FB41FC7ED502F.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TilemapModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.TilemapModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TilemapModule.dll_B15FB41FC7ED502F.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 54
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UIElementsModule.dll_19589624EC2BC50E.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UIElementsModule.dll_19589624EC2BC50E.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIElementsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIElementsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UIElementsModule.dll_19589624EC2BC50E.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 55
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UIModule.dll_028329EF2F7EAD07.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UIModule.dll_028329EF2F7EAD07.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UIModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UIModule.dll_028329EF2F7EAD07.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 56
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UmbraModule.dll_2F75B6A6E1273FFA.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UmbraModule.dll_2F75B6A6E1273FFA.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UmbraModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UmbraModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UmbraModule.dll_2F75B6A6E1273FFA.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 57
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsCommonModule.dll_C30341E636DE802F.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsCommonModule.dll_C30341E636DE802F.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsCommonModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsCommonModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsCommonModule.dll_C30341E636DE802F.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 58
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsModule.dll_06FB4A61A02CCB74.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsModule.dll_06FB4A61A02CCB74.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityAnalyticsModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsModule.dll_06FB4A61A02CCB74.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 59
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityConnectModule.dll_4DECD07C0902F2C8.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityConnectModule.dll_4DECD07C0902F2C8.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityConnectModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityConnectModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityConnectModule.dll_4DECD07C0902F2C8.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 60
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityCurlModule.dll_571CFF40972EE2C2.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityCurlModule.dll_571CFF40972EE2C2.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityCurlModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityCurlModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityCurlModule.dll_571CFF40972EE2C2.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 61
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityTestProtocolModule.dll_D6FE58FC87D25830.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityTestProtocolModule.dll_D6FE58FC87D25830.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityTestProtocolModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityTestProtocolModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityTestProtocolModule.dll_D6FE58FC87D25830.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 62
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAssetBundleModule.dll_1DDD33BCDCDC6545.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAssetBundleModule.dll_1DDD33BCDCDC6545.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAssetBundleModule.dll_1DDD33BCDCDC6545.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 63
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAudioModule.dll_9FC0D880A360AC69.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAudioModule.dll_9FC0D880A360AC69.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAudioModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestAudioModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAudioModule.dll_9FC0D880A360AC69.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 64
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestModule.dll_6AFEA071F9DF1381.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestModule.dll_6AFEA071F9DF1381.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestModule.dll_6AFEA071F9DF1381.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 65
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestTextureModule.dll_5614715B1CA3D95E.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestTextureModule.dll_5614715B1CA3D95E.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestTextureModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestTextureModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestTextureModule.dll_5614715B1CA3D95E.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 66
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestWWWModule.dll_C46964C6D23625DA.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestWWWModule.dll_C46964C6D23625DA.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestWWWModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.UnityWebRequestWWWModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestWWWModule.dll_C46964C6D23625DA.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 67
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.VFXModule.dll_222B2568F0719279.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.VFXModule.dll_222B2568F0719279.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VFXModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VFXModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VFXModule.dll_222B2568F0719279.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 68
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.VRModule.dll_55555074D139327F.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.VRModule.dll_55555074D139327F.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VRModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VRModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VRModule.dll_55555074D139327F.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 69
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.VehiclesModule.dll_B1B718684D580D4A.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.VehiclesModule.dll_B1B718684D580D4A.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VehiclesModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VehiclesModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VehiclesModule.dll_B1B718684D580D4A.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 70
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.VideoModule.dll_D9AA8EF91692B02C.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.VideoModule.dll_D9AA8EF91692B02C.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VideoModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.VideoModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VideoModule.dll_D9AA8EF91692B02C.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 71
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.WindModule.dll_010F7FC7AA59397B.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.WindModule.dll_010F7FC7AA59397B.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.WindModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.WindModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.WindModule.dll_010F7FC7AA59397B.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 72
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.XRModule.dll_881413795A737FDD.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.XRModule.dll_881413795A737FDD.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.XRModule.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.XRModule.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.XRModule.dll_881413795A737FDD.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 73
+    },
+    {
+      "Annotation": "MovedFromExtractor Library/Bee/artifacts/mvdfrm/UnityEngine.dll_2AC32B54D9BC41E3.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/mvdfrm/UnityEngine.dll_2AC32B54D9BC41E3.mvfrm\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.dll\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/PlaybackEngines/AndroidPlayer/Variations/il2cpp/Managed/UnityEngine.dll",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll"
+      ],
+      "InputFlags": [
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.dll_2AC32B54D9BC41E3.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 74
+    },
+    {
+      "Annotation": "WriteText Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm.rsp",
+      "DisplayName": "Writing Unity.Multiplayer.Center.Common.dll.mvfrm.rsp",
+      "ActionType": "WriteFile",
+      "PayloadOffset": 31994,
+      "PayloadLength": 5927,
+      "PayloadDebugContentSnippet": "Library/Bee/artifacts/mvdfrm/U",
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm.rsp"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "DebugActionIndex": 75
+    },
+    {
+      "Annotation": "MovedFromExtractor-Combine Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm",
+      "DisplayName": "Checking for moved APIs",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll\" \"Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm\" \"@Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm.rsp\"",
+      "Inputs": [
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AIModule.dll_070F8BC1D337A75B.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ARModule.dll_C08250C530550624.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AccessibilityModule.dll_2C2C1B32353BA5EF.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AndroidJNIModule.dll_96F311B033071A99.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AnimationModule.dll_24005E0F271AF0D5.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AssetBundleModule.dll_30821AE17CB9A4A3.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.AudioModule.dll_B4A10A8E54009487.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ClothModule.dll_1B8967892E1D736B.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ContentLoadModule.dll_C99874224B3C4C90.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.CoreModule.dll_8AC0A49F1922BB12.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.CrashReportingModule.dll_9449904B85F3EDEA.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.DSPGraphModule.dll_3F458052458F0ED0.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.DirectorModule.dll_39F41EE8D32E3DAF.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GIModule.dll_9F4BD4CF6EE68F75.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GameCenterModule.dll_C1405BCAF9480B8A.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GraphicsStateCollectionSerializerModule.dll_3F7CEFD40A23DAD7.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.GridModule.dll_6831C08D31775109.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.HierarchyCoreModule.dll_A346B80CA3E8FEE5.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.HotReloadModule.dll_A5491C15024E0C57.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.IMGUIModule.dll_ED00A9F51A322868.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ImageConversionModule.dll_595F98C7EEEA7902.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputForUIModule.dll_C3F2B5E45968A846.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputLegacyModule.dll_C1C7360014AB5A94.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.InputModule.dll_1B16D23ECA38B92B.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.JSONSerializeModule.dll_8C43A46E34770679.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.LocalizationModule.dll_1E768BD5577EB7DC.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.MarshallingModule.dll_D8EAB97660E1D1F5.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.MultiplayerModule.dll_B02A376E3581321B.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ParticleSystemModule.dll_E75BD997F4057978.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PerformanceReportingModule.dll_27C484A21CF5E1D1.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.Physics2DModule.dll_70A64DFFC817E86A.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PhysicsModule.dll_F81CD12FDA722638.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.PropertiesModule.dll_EE7B9B096C336FC6.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll_6F622451E3752D33.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ScreenCaptureModule.dll_A62B51F348E332DB.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.ShaderVariantAnalyticsModule.dll_16CE8F0BC87014D9.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SharedInternalsModule.dll_DD70D79D66187452.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteMaskModule.dll_AA6CCE5B1AB7A104.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SpriteShapeModule.dll_49E3483C325BDCAD.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.StreamingModule.dll_D8954B5F76A2A813.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SubstanceModule.dll_B5405FA8C1F5A621.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.SubsystemsModule.dll_151A34BCE8FF8917.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TLSModule.dll_A14C8CFA1A04290C.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainModule.dll_12634C9EB0306F26.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TerrainPhysicsModule.dll_E7D6826B0D487405.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreFontEngineModule.dll_B1BEE8F952F2B050.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextCoreTextEngineModule.dll_F9A71F6AE276696E.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TextRenderingModule.dll_CF6AC3FE001AB2D0.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.TilemapModule.dll_B15FB41FC7ED502F.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UIElementsModule.dll_19589624EC2BC50E.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UIModule.dll_028329EF2F7EAD07.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UmbraModule.dll_2F75B6A6E1273FFA.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsCommonModule.dll_C30341E636DE802F.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityAnalyticsModule.dll_06FB4A61A02CCB74.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityConnectModule.dll_4DECD07C0902F2C8.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityCurlModule.dll_571CFF40972EE2C2.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityTestProtocolModule.dll_D6FE58FC87D25830.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAssetBundleModule.dll_1DDD33BCDCDC6545.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestAudioModule.dll_9FC0D880A360AC69.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestModule.dll_6AFEA071F9DF1381.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestTextureModule.dll_5614715B1CA3D95E.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.UnityWebRequestWWWModule.dll_C46964C6D23625DA.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VFXModule.dll_222B2568F0719279.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VRModule.dll_55555074D139327F.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VehiclesModule.dll_B1B718684D580D4A.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.VideoModule.dll_D9AA8EF91692B02C.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.WindModule.dll_010F7FC7AA59397B.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.XRModule.dll_881413795A737FDD.mvfrm",
+        "Library/Bee/artifacts/mvdfrm/UnityEngine.dll_2AC32B54D9BC41E3.mvfrm",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/Compilation/ApiUpdater/ApiUpdater.MovedFromExtractor.dll",
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm.rsp"
+      ],
+      "InputFlags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll.mvfrm"
+      ],
+      "OutputFlags": [
+        0
+      ],
+      "ToBuildDependencies": [
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 76
+    },
+    {
+      "Annotation": "CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.dll",
+      "DisplayName": "Copying Unity.Multiplayer.Center.Common.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.dll"
+      ],
+      "InputFlags": [
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.dll"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "ToBuildDependencies": [
+        4
+      ],
+      "DebugActionIndex": 77
+    },
+    {
+      "Annotation": "CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.pdb",
+      "DisplayName": "Copying Unity.Multiplayer.Center.Common.pdb",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "Library/Bee/artifacts/1300b0aP.dag/Unity.Multiplayer.Center.Common.pdb"
+      ],
+      "InputFlags": [
+        0
+      ],
+      "Outputs": [
+        "Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.pdb"
+      ],
+      "OutputFlags": [
+        2
+      ],
+      "ToBuildDependencies": [
+        4
+      ],
+      "DebugActionIndex": 78
+    },
+    {
+      "Annotation": "BuildPlayerDataGenerator Library/BuildPlayerData/Player/RuntimeInitializeOnLoads.json (+1 other)",
+      "DisplayName": "Extracting script serialization layouts",
+      "Action": "\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun\" \"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPlayerDataGenerator/BuildPlayerDataGenerator.exe\" -a=\"/media/youran/SSD/Study/TUM/Masterarbeit/Learning_Based_Control/hand-tracking-streamer/Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.dll\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Managed/UnityEngine\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/EditorExtensions\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/Extensions/2.0.0\" -s=\"/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/NetStandard/ref/2.1.0\" -s=\"/media/youran/SSD/Study/TUM/Masterarbeit/Learning_Based_Control/hand-tracking-streamer/Library/Bee/PlayerScriptAssemblies\" -o=\"Library/BuildPlayerData/Player\" -rn=\"RuntimeInitializeOnLoads.json\" -tn=\"TypeDb-All.json\"",
+      "Inputs": [
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/netcorerun/netcorerun",
+        "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPlayerDataGenerator/BuildPlayerDataGenerator.exe",
+        "Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.dll"
+      ],
+      "InputFlags": [
+        0,
+        0,
+        0
+      ],
+      "Outputs": [
+        "Library/BuildPlayerData/Player/RuntimeInitializeOnLoads.json",
+        "Library/BuildPlayerData/Player/TypeDb-All.json"
+      ],
+      "OutputFlags": [
+        0,
+        0
+      ],
+      "ToBuildDependencies": [
+        77
+      ],
+      "AllowUnexpectedOutput": true,
+      "DebugActionIndex": 79
+    },
+    {
+      "Annotation": "ScriptAssembliesAndTypeDB",
+      "DisplayName": null,
+      "Inputs": [],
+      "InputFlags": [],
+      "Outputs": [],
+      "OutputFlags": [],
+      "ToBuildDependencies": [
+        6,
+        79
+      ],
+      "DebugActionIndex": 80
+    }
+  ],
+  "FileSignatures": [
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.BuildTools.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.CSharpSupport.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Core.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.DotNet.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.NativeProgramSupport.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Stevedore.Program.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.TinyProfiler2.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Toolchain.GNU.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Toolchain.LLVM.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Toolchain.VisualStudio.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Toolchain.Xcode.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.Tools.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.TundraBackend.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Bee.VisualStudioSolution.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/BeeBuildProgramCommon.Data.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/BeeBuildProgramCommon.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Newtonsoft.Json.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/NiceIO.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/PlayerBuildProgramLibrary.Data.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/PlayerBuildProgramLibrary.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/ScriptCompilationBuildProgram.Data.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/ScriptCompilationBuildProgram.exe"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/SharpYaml.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Api.Attributes.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Cecil.Mdb.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Cecil.Pdb.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Cecil.Rocks.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Cecil.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.IL2CPP.Api.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.IL2CPP.Bee.BuildLogic.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.IL2CPP.Bee.IL2CPPExeCompileCppBuildProgram.Data.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Linker.Api.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/Unity.Options.dll"
+    },
+    {
+      "File": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline/UnityEditor.iOS.Extensions.Xcode.dll"
+    },
+    {
+      "File": "Library/Bee/1300b0aP-inputdata.json"
+    }
+  ],
+  "StatSignatures": [
+    {
+      "File": "Assets/csc.rsp"
+    },
+    {
+      "File": "Assets/mcs.rsp"
+    },
+    {
+      "File": "Library/Bee/1300b0aP-inputdata.json"
+    },
+    {
+      "File": "Library/PackageCache/com.unity.multiplayer.center@f5e57a8bed06/Common/csc.rsp"
+    }
+  ],
+  "GlobSignatures": [
+    {
+      "Path": "/home/youran/Unity/Hub/Editor/6000.0.65f1/Editor/Data/Tools/BuildPipeline"
+    }
+  ],
+  "ContentDigestExtensions": [
+    ".rsp",
+    ".dll",
+    ".exe",
+    ".pdb",
+    ".json",
+    ".csproj"
+  ],
+  "StructuredLogFileName": "Library/Bee/tundra.log.json",
+  "StateFileName": "Library/Bee/TundraBuildState.state",
+  "StateFileNameTmp": "Library/Bee/TundraBuildState.state.tmp",
+  "StateFileNameMapped": "Library/Bee/TundraBuildState.state.map",
+  "ScanCacheFileName": "Library/Bee/tundra.scancache",
+  "ScanCacheFileNameTmp": "Library/Bee/tundra.scancache.tmp",
+  "DigestCacheFileName": "Library/Bee/tundra.digestcache",
+  "DigestCacheFileNameTmp": "Library/Bee/tundra.digestcache.tmp",
+  "CachedNodeOutputDirectoryName": "Library/Bee/CachedNodeOutput",
+  "EmitDataForBeeWhy": 0,
+        "NamedNodes": {
+          "all_tundra_nodes": 0,
+          "ScriptAssemblies": 6,
+          "ScriptAssembliesAndTypeDB": 80
+        }
+,  "DefaultNodes": [
+    0
+  ],
+  "SharedResources": [],
+  "Scanners": [],
+  "Identifier": "Library/Bee/1300b0aP.dag.json",
+  "PayloadsFile": "/media/youran/SSD/Study/TUM/Masterarbeit/Learning_Based_Control/hand-tracking-streamer/Library/Bee/1300b0aP.dag.payloads",
+  "RelativePathToRoot": "../.."
+}

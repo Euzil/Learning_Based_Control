@@ -36,7 +36,7 @@ Unity BodyLandmarkStreamer 输出全身关节
         ↓
 Python 中间层接收、记录、可视化
         ↓
-坐标转换、尺度归一化、滤波、IK、安全限制
+坐标统一、人体特征预处理、学习式 retargeting、策略控制、安全限制
         ↓
 机器人模拟器
         ↓
@@ -48,17 +48,130 @@ Python 中间层接收、记录、可视化
 - Unity/Quest 层负责采集 VR 设备可获得的人体数据。
 - Python 接收层负责把 Unity 发来的文本数据解析成结构化数组。
 - Python 可视化和录制层负责检查数据是否稳定、连续、方向正确。
-- 机器人映射层负责从人体骨架中提取机器人控制目标。
-- 机器人控制层负责 IK、滤波、限位、速度约束和安全保护。
+- 学习式 retargeting 层负责从人体骨架中生成机器人参考姿态。
+- 机器人控制层负责策略推理、限位、速度约束和安全保护。
 - VR 显示层负责把机器人视觉和状态回传给用户。
 
 整体开发原则：
 
 - 先验证数据，再控制机器人。
 - 先离线回放，再实时控制。
-- 先控制头部和双手，再扩展到全身。
+- 先检查头部、双手、骨盆和双脚等关键点，再扩展到完整全身特征。
 - 先在模拟器中验证，再接真实机器人。
 - 每一步都保留可视化和日志，避免黑箱调试。
+
+整体阶段分为三条主线：
+
+```text
+A. HTS 数据链路：采集、可视化、录制、回放和质量检查。
+B. 模拟学习训练：基于录制数据，在模拟器中训练 retargeter 和 TWIST2-style policy。
+C. Sim2Real 与最终闭环：模拟器完整验证后，迁移到真实机器人，并完成 VR 视觉反馈闭环。
+```
+
+推荐推进顺序：
+
+```text
+1. 先完成 HTS 数据链路，保证 84 关节人体数据可信、可录制、可回放。
+2. 然后进入模拟学习训练，用录制数据训练人体动作到机器人参考姿态的 retargeter。
+3. 在模拟器中重新训练适配当前 VR 设备和当前机器人的 TWIST2-style policy。
+4. 完成离线 recording 和实时 VR 输入下的模拟器闭环验证。
+5. 最后进入 sim2real，把通过模拟验证的系统迁移到真实机器人。
+6. 真实机器人稳定后，再加入机器人视觉回传，形成最终闭环 VR 遥操作。
+```
+
+阶段去重说明：
+
+```text
+阶段 1 是阶段 2 的前置验证，不是长期独立模块。
+阶段 5 是阶段 4 的增强版录制工具，不是新的算法阶段。
+阶段 9 和阶段 10 可以在代码中合成同一个 preprocessing pipeline，但文档中分开写，方便先检查关键点选择，再检查坐标统一。
+阶段 18 是阶段 19 的子系统；真实机器人控制稳定前可以暂缓，但最终闭环必须包含它。
+```
+
+去重后的主执行视图：
+
+```text
+A. HTS 数据链路
+原始手部链路验证
+全身 84 关节输出
+实时可视化和坐标检查
+录制数据，并在录制时同步可视化
+离线回放和数据质量检查
+
+B. 模拟学习训练
+定义训练问题
+构建学习数据集
+预处理：关键点/时序特征/坐标统一/归一化
+接入机器人模型和训练模拟器
+生成 teacher label / robot reference
+训练 learned retargeter
+重新训练 TWIST2-style policy
+离线 recording 模拟闭环
+实时 VR 模拟闭环
+
+C. Sim2Real 与最终闭环
+真实机器人分阶段部署
+机器人视觉回传
+最终闭环 VR 遥操作
+```
+
+各主线的输入、输出和完成标准：
+
+```text
+A. HTS 数据链路
+输入：Quest / VR 设备中的人体 tracking 数据
+输出：可信的 recordings/*.npz 和可视化/回放工具
+完成标准：84 关节顺序、左右方向、头部方向、时间戳和数据连续性都可以被离线复查
+
+B. 模拟学习训练
+输入：多段已检查的 HTS recording
+输出：learned retargeter checkpoint、robot reference/mimic obs、重新训练的 TWIST2-style policy checkpoint
+完成标准：离线 recording 和实时 VR stream 都能在模拟器中稳定驱动机器人，不直接把人体坐标当机器人姿态
+
+C. Sim2Real 与最终闭环
+输入：已经通过模拟验证的 retargeter 和 policy
+输出：真实机器人安全遥操作系统，以及机器人视觉/状态回传到 VR
+完成标准：真实机器人分阶段执行稳定，有急停、限位、断连保护和端到端延迟监控
+```
+
+关键阶段边界：
+
+```text
+阶段 0-2：只回答“VR 设备能不能稳定给出人体数据”
+输入：Unity/Quest tracking
+输出：手部、腿部、全身 84 关节协议
+不做：机器人映射、训练、控制
+
+阶段 3-6：只回答“这些人体数据是否可信、可记录、可复查”
+输入：实时 84 关节 stream
+输出：可视化结果、recordings/*.npz、离线质量报告
+不做：把人体动作解释成机器人动作
+
+阶段 7-10：只回答“学习问题和学习输入是否定义清楚”
+输入：已检查的 recordings/*.npz
+输出：dataset split、learning_features、coordinate calibration、normalization statistics
+不做：训练 policy 或连接真实机器人
+
+阶段 11-12：只回答“机器人模型和训练标签是否准备好”
+输入：机器人模型、learning_features、动作片段
+输出：可播放的 robot reference、teacher qpos、mimic obs、质量过滤结果
+不做：把 teacher 当最终控制方法
+
+阶段 13-14：只回答“模型和策略是否学会了这套任务”
+输入：learning_features、teacher/reference、机器人训练环境
+输出：retargeter checkpoint、TWIST2-style policy checkpoint、训练日志和评估结果
+不做：真实机器人部署
+
+阶段 15-16：只回答“模拟闭环是否真的跑通”
+输入：recording 或实时 VR stream、retargeter、policy
+输出：稳定的离线模拟和实时模拟闭环
+不做：绕过模拟直接上真实机器人
+
+阶段 17-19：只回答“能否安全迁移到真实机器人并形成最终 VR 闭环”
+输入：模拟验证通过的 retargeter 和 policy
+输出：真实机器人遥操作、视觉回传、最终闭环系统
+不做：在真实机器人上临时探索未经模拟验证的动作
+```
 
 ## 2. 阶段 0：原始 HTS 手部追踪验证
 
@@ -278,7 +391,7 @@ High confidence: True
 Quest / Unity -> BodyLandmarkStreamer -> Body root + Body joints_pose
 ```
 
-## 5. 阶段 3：Python 实时全身可视化
+## 5. 阶段 3：实时全身可视化与坐标检查
 
 目标：在 Python 中实时检查全身数据的位置、方向和连续性。
 
@@ -360,7 +473,7 @@ Python 实时显示全身骨架，头部方向随摇头变化。
 
 目标：将实时全身关节数据保存下来，作为后续机器人映射和模拟器调试的数据源。
 
-这个阶段的核心是获得可重复使用的数据。实时数据每次都不一样，而录制数据可以反复回放、反复调试坐标转换、IK 和机器人控制逻辑。
+这个阶段的核心是获得可重复使用的数据。实时数据每次都不一样，而录制数据可以反复回放、反复调试坐标转换、学习输入特征和机器人控制逻辑。
 
 工作内容：
 
@@ -434,11 +547,11 @@ mixed_01.npz       头、手、腿组合动作
 Quest / Unity -> Python recorder -> recordings/*.npz
 ```
 
-## 7. 阶段 5：记录与可视化同步进行
+## 7. 阶段 5：录制时同步可视化
 
-目标：录制数据时同时看到实时骨架，避免录完后才发现动作或坐标有问题。
+目标：作为阶段 4 的配套工具，在录制数据时同时看到实时骨架，避免录完后才发现动作或坐标有问题。
 
-这个阶段把实时检查和数据录制合并到同一个脚本中。这样录制期间可以立即发现 tracking 丢失、左右反转、头部方向异常或身体跳变。
+这个阶段不是新的算法主线，而是数据采集质量保障。它把实时检查和数据录制合并到同一个脚本中，这样录制期间可以立即发现 tracking 丢失、左右反转、头部方向异常或身体跳变。
 
 工作内容：
 
@@ -491,7 +604,7 @@ python scripts/record_visualize_body_stream.py --protocol tcp --host localhost -
 边看边录，得到可回放的 recordings/*.npz。
 ```
 
-## 8. 阶段 6：录制数据离线回放
+## 8. 阶段 6：离线回放与数据质量检查
 
 目标：对 `.npz` 录制文件进行离线检查，并能反复查看同一段动作。
 
@@ -563,11 +676,135 @@ python scripts/replay_body_recording.py recordings/test_01.npz --frame-step 3
 recordings/*.npz -> replay_body_recording.py -> 离线全身骨架回放
 ```
 
-## 9. 阶段 7：提取机器人控制关键点
+## 9. 阶段 7：模拟训练阶段总体定义
 
-目标：从 84 个全身关节中提取机器人控制真正需要的少量关键点。
+目标：当 VR 录制数据已经可靠后，进入模拟训练阶段。在这个阶段中，不再把手写尺度缩放或手写规则作为主线，而是训练模型把 VR 获得的人体动作转换成符合机器人身体结构的参考姿态，并重新训练适配新 VR 设备和新机器人的 TWIST2-style 控制策略。
 
-机器人通常不能直接使用人体的 84 个关节点。人和机器人的骨架结构、自由度、比例和关节定义都不同。更合理的方法是先把人体骨架压缩成机器人可用的控制目标，例如头部方向、左右手末端位置、骨盆位置、左右脚位置等。
+这个阶段的核心认识是：机器人不应该直接追踪人体关节坐标。人和机器人身体比例、关节数量、关节轴、运动范围和动力学能力都不同。学习模型要做的是理解人的动作意图，并输出机器人能够自然执行的姿态。控制策略要在模拟器中学习如何稳定跟踪这些参考姿态。
+
+推荐系统结构：
+
+```text
+HTS 84 joints recording / live stream
+        ↓
+预处理：坐标转换、root 对齐、速度计算、滤波
+        ↓
+学习式 retargeter
+        ↓
+机器人 qpos / robot reference motion
+        ↓
+重新训练的 TWIST2-style policy
+        ↓
+机器人运动
+```
+
+学习模型负责：
+
+- 从 84 个人体关节中提取动作意图。
+- 处理不同人的身高和身体比例。
+- 处理 VR 设备穿戴差异。
+- 输出机器人可达、连续、自然的参考姿态。
+- 避免把人体不可执行动作直接交给机器人。
+
+TWIST2-style policy 负责：
+
+- 根据机器人当前 proprioception 执行参考动作。
+- 生成低层关节控制。
+- 保持动态稳定。
+- 在模拟器和真实机器人上运行。
+
+建议不要一开始训练：
+
+```text
+HTS 84 joints -> robot motor torque/action
+```
+
+更稳妥的学习目标是：
+
+```text
+HTS 84 joints -> robot reference qpos -> TWIST2-style policy
+```
+
+第一阶段可以参考 TWIST2 的 observation、reward 和训练结构，但由于 VR 设备和机器人可能都不同，最终需要在模拟器中重新训练 policy，使策略适配新的 reference 分布、新机器人模型和新的遥操作数据。
+
+## 10. 阶段 8：学习数据集采集与组织
+
+目标：建立用于训练 retargeter 的原始人体动作数据集。
+
+每条原始样本建议保存：
+
+```text
+timestamps
+root_poses
+joint_poses          [N, 84, 7]
+joint_positions      [N, 84, 3]
+metadata
+calibration_id
+user_height optional
+```
+
+建议数据目录：
+
+```text
+datasets/hts_g1/
+  recordings/raw/
+  recordings/calibration/
+  splits/train.txt
+  splits/val.txt
+  splits/test.txt
+  metadata.json
+```
+
+建议先录制的动作：
+
+- 静止站立。
+- 左手上举。
+- 右手上举。
+- 双手前伸。
+- 躯干轻微转动。
+- 原地左右重心移动。
+- 小幅下蹲。
+- 原地踏步。
+- 慢速走动。
+- 转身。
+- 简单操作动作。
+
+每段动作建议：
+
+- 开始前静止 2-3 秒。
+- 动作速度先慢后快。
+- 单段 10-20 秒。
+- 同一动作多录几次。
+- 不同穿戴位置和不同用户都要记录 metadata。
+
+原始数据质量过滤：
+
+- 删除 tracking 丢失片段。
+- 删除 root 高度突变片段。
+- 删除关节位置跳变片段。
+- 删除速度和加速度异常的片段。
+- 保留动作开始前的静止校准窗口。
+- 标记站立、上肢、下肢、转身等动作类别。
+
+建议脚本：
+
+```text
+check_hts_recording_quality.py
+split_hts_dataset.py
+summarize_hts_dataset.py
+```
+
+检查点：
+
+```text
+多条 HTS recording 被整理成可训练、可验证、可复现实验的数据集。
+```
+
+## 11. 阶段 9：学习输入关键点与特征提取
+
+目标：从 84 个全身关节中提取学习模型真正需要的关键点和时序特征。
+
+机器人通常不能直接使用人体的 84 个关节点。人和机器人的骨架结构、自由度、比例和关节定义都不同。更合理的方法是先把人体骨架整理成学习模型可用的输入特征，例如 root-relative position、joint velocity、头部方向、双手位置、骨盆位置、脚部位置等。
 
 建议提取：
 
@@ -591,7 +828,7 @@ RightAnkle
 建议脚本：
 
 ```text
-scripts/extract_robot_targets.py
+scripts/extract_learning_features.py
 ```
 
 输入：
@@ -603,7 +840,7 @@ recordings/*.npz
 输出：
 
 ```text
-robot_targets/*.npz
+learning_features/*.npz
 ```
 
 建议输出内容：
@@ -626,6 +863,9 @@ left_knee_position
 right_knee_position
 left_ankle_position
 right_ankle_position
+root_relative_joint_positions
+joint_velocities
+body_direction
 ```
 
 提取逻辑需要包含：
@@ -633,16 +873,16 @@ right_ankle_position
 - 从 `joint_poses[:, joint_index, :]` 中取出指定关节。
 - 保留原始时间戳。
 - 保留必要的 position 和 quaternion。
-- 输出一个更小、更适合机器人控制的数据文件。
+- 输出一个更小、更适合学习训练的数据文件。
 - 可选地输出 JSON metadata，记录每个 key 对应的 Meta joint index。
 
 建议增加一个关键点可视化脚本：
 
 ```text
-scripts/visualize_robot_targets.py
+scripts/visualize_learning_features.py
 ```
 
-该脚本只显示机器人控制目标点：
+该脚本只显示学习模型重点使用的人体关键点：
 
 ```text
 head
@@ -668,12 +908,12 @@ right knee
 检查点：
 
 ```text
-recordings/*.npz -> extract_robot_targets.py -> robot_targets/*.npz
+recordings/*.npz -> extract_learning_features.py -> learning_features/*.npz
 ```
 
-## 10. 阶段 8：人体到机器人坐标转换
+## 12. 阶段 10：学习输入坐标统一与归一化
 
-目标：把 Quest/Unity 的人体坐标转换到机器人模拟器坐标。
+目标：把 Quest/Unity 的人体坐标统一到模拟器和学习模型使用的坐标表示。
 
 坐标转换是后续机器人控制中最容易出错的部分。即使人体骨架看起来正确，只要机器人模拟器坐标系和人体坐标系不一致，就会出现抬左手变成抬右手、向前变成向侧方、头部朝向错误等问题。
 
@@ -705,7 +945,7 @@ z: 上
 建议脚本：
 
 ```text
-scripts/calibrate_body_to_robot.py
+scripts/calibrate_hts_learning_coordinates.py
 ```
 
 输入：
@@ -761,33 +1001,40 @@ robot_height
 检查点：
 
 ```text
-人体关键点 -> 坐标转换 -> 机器人坐标系关键点
+人体关键点 -> 坐标统一和归一化 -> 学习模型输入特征
 ```
 
-## 11. 阶段 9：接入人形机器人模拟器
+## 13. 阶段 11：训练模拟器与机器人模型接入
 
-目标：选择并加载一个人形机器人模型，为后续 IK 和控制做准备。
+目标：选择并加载目标人形机器人模型，为后续 reference 生成、策略训练和 sim2real 做准备。
 
-建议优先使用：
+建议分清两个模拟器用途：
 
 ```text
-MuJoCo + Python
+MuJoCo / Python: reference 回放、可视化调试、闭环验证
+IsaacGym / legged_gym: 大规模并行 policy 训练
 ```
 
 原因：
 
-- 适合人形机器人控制。
-- Python 接口方便。
-- 便于离线回放、实时控制和 learning-based control。
-- 可以方便地访问关节位置、速度、执行器和传感器。
+- MuJoCo 适合快速检查机器人模型、关节命名、reference 是否自然、实时闭环是否接通。
+- IsaacGym / legged_gym 更适合重新训练 TWIST2-style policy，因为需要大量并行环境和长时间采样。
+- 两者需要共享同一套机器人关节定义、动作维度、限位和 observation/reference 约定。
 
-需要准备：
+MuJoCo 侧需要准备：
 
 - 一个可运行的人形机器人 MJCF/XML 模型。
 - 能在 MuJoCo 中加载并显示模型。
 - 能读取机器人关节状态。
 - 能设置机器人关节目标或 actuator control。
 - 能以固定 timestep 运行仿真。
+
+Policy 训练侧需要准备：
+
+- 与 TWIST2-style policy 匹配的机器人资产。
+- 与机器人模型一致的 action space 和 joint order。
+- 可批量加载 reference motion / mimic obs 的训练环境。
+- reward、termination、domain randomization 和 observation history 配置。
 
 建议脚本：
 
@@ -832,162 +1079,505 @@ scripts/mujoco_load_robot.py
 MuJoCo 打开机器人模型，并能手动改变关节角。
 ```
 
-## 12. 阶段 10：离线人体动作驱动机器人
+## 14. 阶段 12：Teacher Label 与 Robot Reference 生成
 
-目标：先使用录制数据驱动机器人模拟器，而不是直接实时控制。
+目标：把已有 HTS 录制批量转换成可以训练模型的机器人姿态标签，并在模拟器中检查这些标签是否符合机器人结构。
 
-这个阶段使用固定的 `.npz` 录制数据驱动机器人。因为输入数据固定，所以如果机器人动作不对，问题通常来自坐标转换、尺度、IK 或关节限制，而不是实时网络波动。
-
-第一步控制上半身：
+teacher label 的作用不是最终控制机器人，而是为 learned retargeter 提供训练目标。初始 teacher/reference 可以来自模拟优化、可行性投影、人工筛选的 motion，或者临时使用已有工具生成的候选标签：
 
 ```text
-VR head        -> 机器人头部方向
-VR left wrist  -> 机器人左手末端目标
-VR right wrist -> 机器人右手末端目标
+HTS 84 joints
+        ↓
+simulation optimization / feasibility projection / optional adapter
+        ↓
+robot feasibility projection
+        ↓
+robot qpos / TWIST2-style mimic obs
 ```
 
-第二步加入更多身体目标：
+已有工具可以作为早期生成标签的辅助，但不应成为主线依赖。主线目标是构建自己的学习式人体到机器人姿态模型，并在模拟器中重新训练控制策略。
+
+需要保存：
 
 ```text
-left elbow / right elbow
-pelvis
-left ankle / right ankle
-left knee / right knee
+timestamps
+input_hts_joint_poses
+teacher_robot_qpos
+teacher_mimic_obs
+retarget_error
+position_error
+valid_mask
+metadata
 ```
+
+建议标签目录：
+
+```text
+datasets/hts_g1/
+  labels/teacher_qpos/
+  labels/mimic_obs/
+  labels/quality_reports/
+```
+
+质量过滤规则：
+
+- 删除 tracking 丢失片段。
+- 删除 root 高度突变片段。
+- 删除 teacher retargeting error 过大的片段。
+- 删除 G1 关节超限片段。
+- 删除速度或加速度不连续片段。
+- 标记站立、上肢、下肢、转身等动作类别。
 
 建议脚本：
 
 ```text
-scripts/mujoco_replay_body_targets.py
+generate_hts_robot_teacher_labels.py
+check_teacher_label_quality.py
+view_robot_reference.py
 ```
 
-控制方法：
+robot reference 生成原则：
 
-- 使用 IK 求机器人关节角。
+- 使用模拟优化、可行性投影或 teacher 模型生成机器人关节角。
 - 不直接把人体关节点位置当作机器人关节角。
-- 先控制头部和双手，再扩展到全身。
+- 先生成上半身 reference，再扩展到全身 reference。
 - 加入关节角限制和速度限制。
-- 对目标点做低通滤波。
-- 对不可达目标做裁剪。
+- 对 reference 做速度、加速度和平滑性约束。
+- 对机器人不可达或动力学上不稳定的目标做过滤或降权。
 
-IK 目标建议：
+teacher/reference 至少应覆盖的动作意图：
 
 ```text
-head orientation
-left hand position
-right hand position
-left elbow optional guide
-right elbow optional guide
-pelvis position optional
+head orientation / yaw
+left and right hand motion
+pelvis height and yaw
+left and right foot contact or stepping cue
+upper body lean
 ```
 
-离线回放流程：
+离线生成流程：
 
 ```text
 recordings/*.npz
         ↓
-extract_robot_targets.py
+extract_learning_features.py
         ↓
-calibrate_body_to_robot.py
+generate_hts_robot_teacher_labels.py
         ↓
-mujoco_replay_body_targets.py
+check_teacher_label_quality.py
         ↓
-MuJoCo robot motion
+robot reference motion / mimic obs
 ```
 
-调试顺序：
+质量检查顺序：
 
-- 只让机器人头部跟随。
-- 再让左手跟随。
-- 再让右手跟随。
-- 再同时控制头部和双手。
-- 再加入肘部 guide。
-- 最后考虑腿部或骨盆。
+- 先检查静止站立 reference 是否自然。
+- 再检查上肢动作是否左右正确、方向正确。
+- 再检查骨盆高度、躯干方向和脚部接触是否合理。
+- 再检查连续动作中的速度和加速度是否平滑。
+- 最后检查完整片段能否被 policy 训练环境稳定加载。
 
 检查内容：
 
 - 头部方向是否正确。
 - 左右手是否没有交换。
-- 手部目标是否在机器人可达范围内。
-- IK 是否平滑。
+- 上肢、骨盆和脚部 reference 是否在机器人可达范围内。
+- reference 速度和加速度是否平滑。
 - 关节角是否超限。
 - 机器人是否出现突然抖动或穿模。
 
 检查点：
 
 ```text
-robot_targets/*.npz -> MuJoCo IK -> 机器人头部和双手跟随录制动作
+recordings/*.npz -> teacher labels / robot reference -> 模拟器中可播放、可训练的机器人参考动作
 ```
 
-## 13. 阶段 11：实时 VR 到机器人模拟器控制
+## 15. 阶段 13：Learned Retargeter 训练
 
-目标：把离线流程改成实时控制。
+目标：训练一个模型，把 HTS 84 关节动作序列转换为机器人参考姿态。这个模型是人体动作和 TWIST2-style policy 之间的中间层，它不直接控制电机，而是输出机器人可执行、连续、自然的 reference。
 
-这个阶段把固定 `.npz` 文件替换成 Unity/Quest 实时输入。离线版本中已经验证过的坐标转换、尺度标定、目标提取和 IK 逻辑应尽量复用，避免重新写一套。
-
-实时链路：
+阶段输入：
 
 ```text
-Quest / Unity
-        ↓
-TCP / UDP
-        ↓
-Python receiver
-        ↓
-坐标转换 + 滤波 + IK + 安全限制
-        ↓
-MuJoCo
+HTS recordings
+learning features
+coordinate calibration
+teacher robot qpos / mimic obs
+valid mask
+metadata
 ```
 
-建议脚本：
+阶段输出：
 
 ```text
-scripts/mujoco_live_body_bridge.py
+retargeter checkpoint
+normalization statistics
+predicted robot qpos
+predicted mimic obs
+retargeting quality report
 ```
 
-控制层需要包含：
-
-- 低通滤波。
-- 最大速度限制。
-- 最大关节角限制。
-- 网络断开保护。
-- 目标丢失保护。
-- 急停按键。
-- 实时日志。
-- 控制频率统计。
-
-实时控制需要关注的频率：
+推荐输入：
 
 ```text
-Unity 发送频率
-Python 接收频率
-IK 求解频率
-MuJoCo 仿真频率
-控制命令更新频率
+root-relative joint positions
+joint velocities
+root height
+yaw-normalized body direction
+optional: raw joint quaternions
+optional: confidence / valid mask
 ```
 
-安全策略：
+推荐输出：
 
-- 如果超过一定时间没有收到新 body frame，保持当前机器人姿态或回到安全姿态。
-- 如果目标点突然跳变，限制最大移动速度。
-- 如果 IK 解超出关节范围，裁剪到安全范围。
-- 如果用户按下急停，立即停止发送控制命令。
+```text
+robot qpos: root xyz + root quat + robot dof
+```
 
-调试顺序：
+也可以输出 TWIST2 直接使用的 35D mimic obs：
 
-- 先实时控制头部。
-- 再实时控制单手。
-- 再实时控制双手。
-- 再加入头部和双手同时控制。
-- 再加入更复杂的躯干或腿部控制。
+```text
+base_vel_local_xy
+root_height
+roll_pitch
+yaw_ang_vel_local
+29 robot joints
+```
+
+建议优先输出 robot qpos。原因是 qpos 更容易可视化、检查和做物理约束；之后再由 qpos 转换成 TWIST2-style policy 需要的 mimic obs。
+
+推荐模型结构：
+
+```text
+HTS frame feature
+        ↓
+MLP encoder
+        ↓
+GRU / Temporal Conv / Transformer
+        ↓
+MLP decoder
+        ↓
+robot qpos
+```
+
+实现上可以先用 GRU，因为它实现简单、对短时动作连续性友好、训练成本低。后续如果需要更长时间上下文，再替换为 Temporal Conv 或 Transformer。
+
+数据组织：
+
+```text
+train split: 用于训练模型参数
+validation split: 用于选择 checkpoint 和调参
+test split: 只用于最终评估，不参与训练和调参
+```
+
+训练样本建议使用滑动窗口，而不是单帧输入：
+
+```text
+past HTS features [t-k ... t]
+current HTS features [t]
+optional future short horizon [t+1 ... t+h]
+        ↓
+robot reference at t or short horizon
+```
+
+这样模型可以利用动作速度、方向变化和短时上下文，减少输出抖动。
+
+基础 loss：
+
+```text
+qpos reconstruction loss
+joint position loss
+root height loss
+root orientation loss
+velocity smoothness loss
+joint limit penalty
+```
+
+机器人可行性 loss：
+
+```text
+dof velocity loss
+dof acceleration loss
+foot sliding penalty
+foot contact consistency
+roll / pitch stability penalty
+left-right symmetry regularization
+```
+
+训练流程：
+
+```text
+加载 HTS recording
+        ↓
+加载 teacher robot qpos label
+        ↓
+构建滑动窗口序列
+        ↓
+训练 HTS -> robot qpos 模型
+        ↓
+离线生成 predicted qpos
+        ↓
+MuJoCo 播放检查
+```
+
+推理流程：
+
+```text
+HTS live frame / recording frame
+        ↓
+same preprocessing and normalization as training
+        ↓
+retargeter inference
+        ↓
+robot qpos
+        ↓
+qpos to mimic obs
+        ↓
+TWIST2-style policy
+```
+
+验证指标：
+
+- qpos 是否连续。
+- 关节是否频繁到限位。
+- root 高度是否稳定。
+- 脚底是否明显滑动。
+- 上肢动作是否跟随人体意图。
+- 下肢动作是否保持平衡。
+- 相比 teacher reference 是否更平滑、更自然。
 
 检查点：
 
 ```text
-Quest 实时动作 -> MuJoCo 机器人头部和双手实时跟随
+HTS recording -> learned retargeter -> robot qpos -> MuJoCo reference playback
 ```
 
-## 14. 阶段 12：机器人视觉回传到 VR
+## 16. 阶段 14：TWIST2-style Policy 重新训练
+
+目标：在模拟器中重新训练适配当前 VR 数据和当前机器人的 TWIST2-style 控制策略。
+
+训练输入来自 learned retargeter 或 teacher reference：
+
+```text
+HTS recording / live stream
+        ↓
+learned retargeter
+        ↓
+robot reference qpos / mimic obs
+        ↓
+simulation rollout
+        ↓
+policy observation: mimic obs + proprioception + history/future reference
+        ↓
+TWIST2-style policy
+        ↓
+robot action / PD target
+```
+
+这个阶段可以套用 TWIST2 的训练框架：
+
+```text
+IsaacGym / legged_gym
+PPO / imitation learning
+motion reference tracking reward
+domain randomization
+```
+
+需要根据新机器人重新确认：
+
+```text
+robot XML / URDF
+joint order
+actuator order
+default dof position
+joint limits
+action scale
+observation size
+mimic obs definition
+```
+
+训练奖励建议包含：
+
+```text
+reference joint tracking
+root height tracking
+root orientation tracking
+foot contact stability
+torque penalty
+joint velocity penalty
+action smoothness
+fall penalty
+```
+
+通过标准：
+
+- policy 能在模拟器中稳定跟踪 learned reference。
+- 不同录制动作都能稳定运行。
+- 机器人不会因为上肢动作破坏平衡。
+- 下肢和 root 动作自然且不频繁触碰关节限制。
+- 加入噪声、延迟和机器人参数扰动后仍然稳定。
+
+检查点：
+
+```text
+HTS recording -> learned retargeter -> retrained TWIST2-style policy -> stable simulation
+```
+
+## 17. 阶段 15：离线 Recording 模拟闭环验证
+
+目标：使用录制好的 HTS recording，在模拟器中验证 learned retargeter 和重新训练 policy 的完整离线闭环。
+
+离线闭环结构：
+
+```text
+HTS recording
+        ↓
+learning feature extraction + normalization
+        ↓
+learned retargeter
+        ↓
+robot reference qpos / mimic obs
+        ↓
+retrained TWIST2-style policy
+        ↓
+MuJoCo / Isaac simulation
+```
+
+这个阶段的重点是排除实时网络和 VR 在线输入的影响，只验证模型和策略本身。
+
+需要检查：
+
+- recording 能否完整播放。
+- learned retargeter 输出是否连续。
+- policy 是否稳定跟踪 reference。
+- 机器人是否长时间不摔倒。
+- root 高度、roll、pitch 是否稳定。
+- 关节角、速度、力矩是否没有异常峰值。
+- 上肢动作是否符合人体意图。
+- 下肢动作是否自然并保持平衡。
+
+建议记录：
+
+```text
+recording name
+retargeter checkpoint
+policy checkpoint
+simulation duration
+fall count
+tracking error
+root height range
+max joint velocity
+max torque
+```
+
+检查点：
+
+```text
+HTS recording -> learned retargeter -> retrained policy -> stable offline simulation
+```
+
+## 18. 阶段 16：实时 VR 到模拟器闭环验证
+
+目标：在离线 recording 模拟闭环通过后，把输入替换成实时 VR stream，在模拟器中验证 learned retargeter 和重新训练 policy 的在线闭环。
+
+实时系统：
+
+```text
+Quest / VR device
+        ↓
+HTS live socket stream
+        ↓
+online preprocessing buffer
+        ↓
+learned retargeter inference
+        ↓
+robot reference qpos / mimic obs
+        ↓
+retrained TWIST2-style policy
+        ↓
+MuJoCo / Isaac simulation
+```
+
+实时推理需要处理：
+
+- 固定 FPS。
+- 滑动窗口缓存。
+- 输入归一化。
+- 输出平滑。
+- 丢帧补偿。
+- 延迟估计。
+- 断连保护。
+- 急停和安全默认姿态。
+
+建议频率：
+
+```text
+VR input: 30-60 Hz
+learned retargeter: 30-60 Hz
+TWIST2 policy: 100 Hz
+MuJoCo simulation: 1000 Hz
+```
+
+实时系统的安全策略：
+
+- 初期只开上肢。
+- 再加入躯干。
+- 最后再加入下肢。
+- 所有输出先限幅。
+- VR 数据丢失时回到默认姿态。
+- 模型输出异常时冻结上一帧或进入安全姿态。
+
+检查点：
+
+```text
+VR live stream -> learned retargeter -> retrained policy -> stable robot simulation
+```
+
+## 19. 阶段 17：Sim2Real 准备与真实机器人分阶段部署
+
+目标：当模拟器中的 learned retargeter 和重新训练 policy 已经完全跑通后，再进入 sim2real。
+
+进入 sim2real 前必须满足：
+
+```text
+离线 recording 可以稳定驱动模拟器。
+实时 VR 输入可以稳定驱动模拟器。
+policy 在扰动环境中长时间不摔倒。
+关节角、速度、力矩没有异常峰值。
+网络延迟和丢帧保护已经验证。
+```
+
+真实机器人部署顺序：
+
+```text
+1. 只回放默认站姿和安全姿态。
+2. 只接 learned retargeter，不发送真实 motor command。
+3. 只控制上肢小幅动作。
+4. 加入躯干小幅动作。
+5. 加入下肢或移动动作。
+6. 扩展到完整 VR 遥操作。
+```
+
+真实机器人安全要求：
+
+```text
+physical emergency stop
+software emergency stop
+joint limit clamp
+velocity clamp
+torque/current monitoring
+VR input timeout
+model output sanity check
+safe default pose recovery
+```
+
+检查点：
+
+```text
+simulation-proven learned teleoperation policy -> real robot safe deployment
+```
+
+## 20. 阶段 18：机器人视觉回传到 VR
 
 目标：把机器人相机画面显示到 Quest 中。
 
@@ -1055,9 +1645,9 @@ Quest 显示稳定性
 机器人相机画面 -> Unity Texture -> Quest VR 显示
 ```
 
-## 15. 阶段 13：闭环 VR 遥操作
+## 21. 阶段 19：最终闭环 VR 遥操作
 
-目标：用户在 VR 中看到机器人视角，同时用身体动作控制机器人。
+目标：用户在 VR 中看到机器人视角，同时用身体动作控制真实机器人，形成完整闭环遥操作系统。
 
 闭环结构：
 
@@ -1066,11 +1656,13 @@ Quest 显示稳定性
         ↓
 用户移动头部 / 手部 / 身体
         ↓
-Python 控制层生成机器人动作
+learned retargeter 生成机器人参考姿态
         ↓
-机器人执行
+重新训练的 TWIST2-style policy 生成机器人控制
         ↓
-机器人相机画面回到 Quest
+真实机器人执行动作
+        ↓
+机器人相机画面和状态回到 Quest
 ```
 
 系统需要包含：
@@ -1080,6 +1672,7 @@ Python 控制层生成机器人动作
 - 碰撞检测。
 - 关节限位。
 - 速度限制。
+- 力矩或电流监控。
 - 延迟监控。
 - 数据丢失保护。
 - 操作模式切换。
@@ -1107,59 +1700,85 @@ Python 控制层生成机器人动作
 
 ```text
 VR body frame timestamp
+retargeter output timestamp
 robot command timestamp
 robot state timestamp
 camera frame timestamp
 end-to-end latency
 control frequency
 video frequency
+emergency stop events
 ```
 
 检查点：
 
 ```text
-VR 视觉反馈 + VR 身体动作控制 + 机器人执行 = 基础闭环遥操作
+VR 视觉反馈 + learned retargeter + 重新训练 policy + 真实机器人执行 = 最终闭环遥操作
 ```
 
-## 16. 阶段顺序总览
+## 22. 阶段顺序总览
 
 ```text
+A. HTS 数据链路
 阶段 0：原始 HTS 手部追踪验证
 阶段 1：脚部和腿部关节扩展
 阶段 2：全身 84 个关节输出
-阶段 3：Python 实时全身可视化
+阶段 3：实时全身可视化与坐标检查
 阶段 4：全身数据录制
-阶段 5：记录与可视化同步进行
-阶段 6：录制数据离线回放
-阶段 7：提取机器人控制关键点
-阶段 8：人体到机器人坐标转换
-阶段 9：接入人形机器人模拟器
-阶段 10：离线人体动作驱动机器人
-阶段 11：实时 VR 到机器人模拟器控制
-阶段 12：机器人视觉回传到 VR
-阶段 13：闭环 VR 遥操作
+阶段 5：录制时同步可视化
+阶段 6：离线回放与数据质量检查
+
+B. 模拟学习训练
+阶段 7：模拟训练阶段总体定义
+阶段 8：学习数据集采集与组织
+阶段 9：学习输入关键点与特征提取
+阶段 10：学习输入坐标统一与归一化
+阶段 11：训练模拟器与机器人模型接入
+阶段 12：Teacher Label 与 Robot Reference 生成
+阶段 13：Learned Retargeter 训练
+阶段 14：TWIST2-style Policy 重新训练
+阶段 15：离线 Recording 模拟闭环验证
+阶段 16：实时 VR 到模拟器闭环验证
+
+C. Sim2Real 与最终闭环
+阶段 17：Sim2Real 准备与真实机器人分阶段部署
+阶段 18：机器人视觉回传到 VR
+阶段 19：最终闭环 VR 遥操作
 ```
 
 建议执行顺序：
 
 ```text
 先确认数据可靠。
-再提取控制关键点。
-再做坐标和尺度标定。
-再用离线数据驱动模拟器。
-再改成实时控制。
-最后加入机器人视觉回传。
+再进入模拟训练阶段。
+再构建学习数据集。
+再提取学习模型输入特征，并做坐标统一和归一化。
+再接入目标机器人模型和训练模拟器。
+再生成 teacher label 或 robot reference。
+再训练 learned retargeter。
+再重新训练适配当前 VR 设备和机器人的 TWIST2-style policy。
+再完成离线 recording 模拟闭环。
+再完成实时 VR 输入下的模拟器闭环。
+再进入 sim2real 和真实机器人分阶段部署。
+再做机器人视觉回传。
+最后完成真实机器人上的闭环 VR 遥操作。
 ```
 
-## 17. 风险和注意事项
+## 23. 风险和注意事项
 
 - Meta Body Tracking 是模型推断结果，不是高精度动作捕捉。
 - 腿部和脚部数据可能在部分姿态下不稳定。
-- 机器人不能直接使用人体关节点，需要 IK 和约束。
+- 机器人不能直接使用人体关节点，需要先转换成符合机器人结构和动力学的 reference。
 - 用户身体比例和机器人比例不同，需要做尺度归一化。
-- 实时控制真实机器人前，需要先在模拟器中验证。
+- 学习方法可以减少手写缩放和手写规则，但不能完全绕过人体和机器人比例差异。
+- 学习模型不应该直接输出电机力矩作为第一阶段目标。
+- 如果 teacher label 质量差，模型初期会继承 teacher 的缺陷。
+- 如果重新训练 policy 时 reference 分布不稳定，policy 会学到不自然或不稳的行为。
+- 数据集中如果动作类型太少，模型会在新动作上泛化差。
+- 训练前需要严格区分 train、validation 和 test motion。
+- 实时控制真实机器人前，需要先在模拟器中完成离线和实时闭环验证。
 - 真实机器人控制需要急停、限位和速度限制。
 - VR 视觉回传存在延迟，需要单独测量和优化。
 - 网络抖动会影响实时控制，需要加入断连保护。
 - 坐标系错误会导致机器人动作方向错误，需要单独做标定和可视化验证。
-- IK 不可达目标需要裁剪，不能直接让机器人追踪任意人体位置。
+- 不可达或动力学上不稳定的人体目标需要过滤、降权或投影，不能直接让机器人追踪任意人体位置。

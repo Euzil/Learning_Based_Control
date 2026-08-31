@@ -46,9 +46,22 @@ import redis
 from rich import print
 from general_motion_retargeting import XRobotStreamer
 
+from hts_offline_xrobot_streamer import HTSOfflineXRobotStreamer
 from data_utils.params import DEFAULT_MIMIC_OBS, DEFAULT_HAND_POSE
 from data_utils.rot_utils import euler_from_quaternion_np, quat_diff_np, quat_rotate_inverse_np
 from data_utils.fps_monitor import FPSMonitor
+
+
+def resolve_offline_path(path_value: str) -> str:
+    path = pathlib.Path(path_value).expanduser()
+    if path.is_absolute() or path.exists():
+        return str(path)
+    repo_root = pathlib.Path(__file__).resolve().parents[1]
+    repo_relative = repo_root / path
+    if repo_relative.exists():
+        return str(repo_relative)
+    return str(path)
+
 
 def start_interpolation(state_machine, start_obs, end_obs, duration=1.0):
     """Start interpolation from start_obs to end_obs over given duration"""
@@ -373,6 +386,8 @@ class XRobotTeleopToRobot:
         self.last_time = time.time()
         self.target_fps = args.target_fps
         self.measured_dt = 1/ self.target_fps # default fallback dt
+        self.loop_count = 0
+        self.last_debug_mimic_obs = None
 
         # Initialize components
         self.teleop_data_streamer = None
@@ -403,8 +418,25 @@ class XRobotTeleopToRobot:
 
     def setup_teleop_data_streamer(self):
         """Initialize and start the teleop data streamer"""
-        self.teleop_data_streamer = XRobotStreamer()
-        print("Teleop data streamer initialized")
+        if self.args.offline_hts_recording:
+            calibration_path = (
+                resolve_offline_path(self.args.offline_hts_calibration)
+                if self.args.offline_hts_calibration
+                else None
+            )
+            self.teleop_data_streamer = HTSOfflineXRobotStreamer(
+                resolve_offline_path(self.args.offline_hts_recording),
+                speed=self.args.offline_hts_speed,
+                loop=self.args.offline_hts_loop,
+                coordinate_transform=self.args.offline_hts_transform,
+                orientation_mode=self.args.offline_hts_orientation,
+                target_height=self.args.offline_hts_target_height if self.args.offline_hts_target_height > 0.0 else None,
+                calibration_path=calibration_path,
+            )
+            print(f"Offline HTS recording streamer initialized: {self.args.offline_hts_recording}")
+        else:
+            self.teleop_data_streamer = XRobotStreamer()
+            print("Teleop data streamer initialized")
         
     def setup_redis_connection(self):
         """Setup Redis connection"""
@@ -481,32 +513,43 @@ class XRobotTeleopToRobot:
         """Update MuJoCo visualization"""
         if qpos is None:
             return
+
+        self.data.qpos[:] = qpos.copy()
+        mj.mj_forward(self.model, self.data)
             
         # Clean custom geometry
         if hasattr(viewer, 'user_scn') and viewer.user_scn is not None:
             viewer.user_scn.ngeom = 0
             
         # Draw the task targets for reference
-        if smplx_data is not None and self.retarget is not None:
+        if smplx_data is not None and self.retarget is not None and not self.args.hide_retarget_targets:
             for robot_link, ik_data in self.retarget.ik_match_table1.items():
                 body_name = ik_data[0]
-                if body_name not in smplx_data:
+                if body_name not in self.retarget.scaled_human_data:
                     continue
+                target_pos, target_quat = self.retarget.scaled_human_data[body_name]
                 draw_frame(
-                    self.retarget.scaled_human_data[body_name][0] - self.retarget.ground,
-                    R.from_quat(smplx_data[body_name][1]).as_matrix(),
+                    target_pos - self.retarget.ground,
+                    R.from_quat(target_quat, scalar_first=True).as_matrix(),
                     viewer,
                     0.1,
                     orientation_correction=R.from_quat(ik_data[-1]),
                 )
-                
-        # Update the simulation
-        if qpos is not None:
-            self.data.qpos[:] = qpos.copy()
-            mj.mj_forward(self.model, self.data)
-            
-            # Camera follow the pelvis
-            self._update_camera_position(viewer)
+
+        if self.args.draw_robot_frames and self.retarget is not None:
+            for robot_link in self.retarget.ik_match_table1.keys():
+                if robot_link not in self.retarget.robot_body_names:
+                    continue
+                body_id = self.model.body(robot_link).id
+                draw_frame(
+                    self.data.xpos[body_id],
+                    self.data.xmat[body_id].reshape(3, 3),
+                    viewer,
+                    0.07,
+                )
+
+        # Camera follow the pelvis
+        self._update_camera_position(viewer)
         
     def _update_camera_position(self, viewer):
         """Update camera to follow the robot"""
@@ -732,6 +775,7 @@ class XRobotTeleopToRobot:
             
             while viewer.is_running():
                 # Get current teleop data
+                self.loop_count += 1
                 smplx_data, left_hand_data, right_hand_data, controller_data, headset_data = self.get_teleop_data()
                 
                 # Update state machine
@@ -763,6 +807,7 @@ class XRobotTeleopToRobot:
                     self.state_machine.set_current_neck_data(neck_data_to_send)
                 
                 self.send_to_redis(mimic_obs_to_send, neck_data_to_send)
+                self.print_offline_debug(mimic_obs_to_send)
                 
                 # Update visualization and record video
                 viewer.sync()
@@ -772,6 +817,25 @@ class XRobotTeleopToRobot:
                 self.fps_monitor.tick()
                 
                 self.rate.sleep()
+
+    def print_offline_debug(self, mimic_obs):
+        if not self.args.offline_hts_recording or self.loop_count % 100 != 0:
+            return
+        frame_text = "?"
+        end_text = ""
+        if hasattr(self.teleop_data_streamer, "last_frame_index"):
+            frame_text = f"{self.teleop_data_streamer.last_frame_index}/{len(self.teleop_data_streamer.timestamps) - 1}"
+        if getattr(self.teleop_data_streamer, "reached_end", False):
+            end_text = " reached_end=1"
+        delta = 0.0
+        if mimic_obs is not None and self.last_debug_mimic_obs is not None:
+            delta = float(np.linalg.norm(mimic_obs - self.last_debug_mimic_obs))
+        if mimic_obs is not None:
+            self.last_debug_mimic_obs = mimic_obs.copy()
+        print(
+            f"[offline] loop={self.loop_count} state={self.state_machine.get_current_state()} "
+            f"frame={frame_text}{end_text} mimic_delta={delta:.4f}"
+        )
 
 def parse_arguments():
     """Parse command line arguments"""
@@ -832,6 +896,71 @@ def parse_arguments():
         type=int,
         default=0,
         help="Measure and print detailed FPS statistics (0=disabled, 1=enabled).",
+    )
+    parser.add_argument(
+        "--hide_retarget_targets",
+        action="store_true",
+        help="Hide retarget target frames in the high-level MuJoCo viewer.",
+    )
+    parser.add_argument(
+        "--draw_robot_frames",
+        action="store_true",
+        help="Draw matched robot link frames in the high-level MuJoCo viewer.",
+    )
+    parser.add_argument(
+        "--offline_hts_recording",
+        type=str,
+        default="",
+        help="Replay an HTS 84-joint NPZ recording through the original TWIST2/GMR xrobot pipeline.",
+    )
+    parser.add_argument(
+        "--offline_hts_speed",
+        type=float,
+        default=1.0,
+        help="Playback speed for --offline_hts_recording.",
+    )
+    parser.add_argument(
+        "--offline_hts_loop",
+        action="store_true",
+        help="Loop --offline_hts_recording playback.",
+    )
+    parser.add_argument(
+        "--offline_hts_transform",
+        choices=["hts_rh", "xrobot_compat"],
+        default="hts_rh",
+        help="Coordinate conversion for HTS NPZ input. Use hts_rh for hand-tracking-streamer recordings.",
+    )
+    parser.add_argument(
+        "--offline_hts_orientation",
+        choices=[
+            "source",
+            "identity",
+            "raw_wxyz",
+            "premultiply",
+            "calibrated",
+            "segments",
+            "segments_x",
+            "segments_y",
+            "segments_z",
+            "segments_robot",
+            "segments_robot_x",
+            "segments_robot_y",
+            "segments_robot_z",
+        ],
+        default="source",
+        help="Orientation conversion mode for HTS NPZ input diagnostics.",
+    )
+    parser.add_argument(
+        "--offline_hts_calibration",
+        type=str,
+        default="",
+        help="Calibration JSON for --offline_hts_orientation calibrated.",
+    )
+    parser.add_argument(
+        "--offline_hts_target_height",
+        type=float,
+        default=0.0,
+        help="Scale HTS joint positions to this estimated head-to-foot height before GMR. 0 disables scaling.",
     )
     return parser.parse_args()
 

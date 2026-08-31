@@ -10,7 +10,11 @@ from collections import deque
 import mujoco.viewer as mjv
 from tqdm import tqdm
 import os
+from data_utils.params import DEFAULT_MIMIC_OBS
 from data_utils.rot_utils import quatToEuler
+
+
+DEFAULT_ACTION_MIMIC = DEFAULT_MIMIC_OBS["unitree_g1_with_hands"]
 
 try:
     import onnxruntime as ort
@@ -55,6 +59,13 @@ def load_onnx_policy(policy_path: str, device: str) -> OnnxPolicyWrapper:
     return OnnxPolicyWrapper(session, input_name)
 
 
+def resolve_torch_device(device: str) -> str:
+    if device.startswith("cuda") and not torch.cuda.is_available():
+        print("Torch CUDA is not available; using CPU tensors for policy input.")
+        return "cpu"
+    return device
+
+
 class RealTimePolicyController:
     def __init__(self, 
                  xml_file, 
@@ -75,7 +86,7 @@ class RealTimePolicyController:
         except Exception as e:
             print(f"Error connecting to Redis: {e}")
 
-        self.device = device
+        self.device = resolve_torch_device(device)
         self.policy = load_onnx_policy(policy_path, device)
 
         # Create MuJoCo sim
@@ -99,6 +110,8 @@ class RealTimePolicyController:
         print(f"sim_decimation: {self.sim_decimation}")
 
         self.last_action = np.zeros(self.num_actions, dtype=np.float32)
+        self.last_debug_mimic = None
+        self.last_debug_pd_target = None
 
         # G1 specific configuration
         self.default_dof_pos = np.array([
@@ -222,6 +235,10 @@ class RealTimePolicyController:
         self.redis_pipeline.set("state_body_unitree_g1_with_hands", json.dumps(initial_obs.tolist()))
         self.redis_pipeline.set("state_hand_left_unitree_g1_with_hands", json.dumps(np.zeros(7).tolist()))
         self.redis_pipeline.set("state_hand_right_unitree_g1_with_hands", json.dumps(np.zeros(7).tolist()))
+        self.redis_pipeline.set("action_body_unitree_g1_with_hands", json.dumps(DEFAULT_ACTION_MIMIC.tolist()))
+        self.redis_pipeline.set("action_hand_left_unitree_g1_with_hands", json.dumps(np.zeros(7).tolist()))
+        self.redis_pipeline.set("action_hand_right_unitree_g1_with_hands", json.dumps(np.zeros(7).tolist()))
+        self.redis_pipeline.set("action_neck_unitree_g1_with_hands", json.dumps(np.zeros(2).tolist()))
         self.redis_pipeline.execute()
 
         measure_fps = self.measure_fps
@@ -268,14 +285,16 @@ class RealTimePolicyController:
                     self.redis_pipeline.execute()
 
                     # Get mimic obs from Redis
-                    keys = ["action_body_unitree_g1_with_hands", "action_hand_left_unitree_g1_with_hands", "action_hand_right_unitree_g1_with_hands", "action_neck_unitree_g1_with_hands"]
+                    keys = ["action_body_unitree_g1_with_hands", "action_hand_left_unitree_g1_with_hands", "action_hand_right_unitree_g1_with_hands", "action_neck_unitree_g1_with_hands", "t_action"]
                     for key in keys:
                         self.redis_pipeline.get(key)
                     redis_results = self.redis_pipeline.execute()
-                    action_mimic = json.loads(redis_results[0])
-                    action_left_hand = json.loads(redis_results[1])
-                    action_right_hand = json.loads(redis_results[2])
-                    action_neck = json.loads(redis_results[3])
+                    action_mimic = json.loads(redis_results[0]) if redis_results[0] else DEFAULT_ACTION_MIMIC.tolist()
+                    action_left_hand = json.loads(redis_results[1]) if redis_results[1] else np.zeros(7).tolist()
+                    action_right_hand = json.loads(redis_results[2]) if redis_results[2] else np.zeros(7).tolist()
+                    action_neck = json.loads(redis_results[3]) if redis_results[3] else np.zeros(2).tolist()
+                    t_action = int(redis_results[4]) if redis_results[4] else 0
+                    action_mimic = np.asarray(action_mimic, dtype=np.float32)
 
                     # Construct observation for TWIST2 controller
                     obs_full = np.concatenate([action_mimic, obs_proprio])
@@ -338,6 +357,22 @@ class RealTimePolicyController:
                     raw_action = np.clip(raw_action, -10., 10.)
                     scaled_actions = raw_action * self.action_scale
                     pd_target = scaled_actions + self.default_dof_pos
+
+                    if policy_step_count % policy_fps_print_interval == 0:
+                        mimic_delta = 0.0
+                        pd_delta = 0.0
+                        if self.last_debug_mimic is not None:
+                            mimic_delta = float(np.linalg.norm(action_mimic - self.last_debug_mimic))
+                        if self.last_debug_pd_target is not None:
+                            pd_delta = float(np.linalg.norm(pd_target - self.last_debug_pd_target))
+                        self.last_debug_mimic = action_mimic.copy()
+                        self.last_debug_pd_target = pd_target.copy()
+                        action_age_ms = int(time.time() * 1000) - t_action if t_action else -1
+                        print(
+                            f"[lowlevel] step={policy_step_count} action_age_ms={action_age_ms} "
+                            f"mimic_norm={np.linalg.norm(action_mimic):.3f} mimic_delta={mimic_delta:.3f} "
+                            f"raw_norm={np.linalg.norm(raw_action):.3f} pd_delta={pd_delta:.3f}"
+                        )
 
                     # self.redis_client.set("action_low_level_unitree_g1", json.dumps(raw_action.tolist()))
                     

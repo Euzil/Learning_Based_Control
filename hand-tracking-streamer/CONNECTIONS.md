@@ -2,6 +2,40 @@
 
 This document describes how Hand Tracking Streamer (HTS) streams hand and wrist data, and how to connect to it over UDP and TCP.
 
+## Controller palm pose format
+
+`ControllerPalmPoseStreamer` can stream Quest Touch controller poses using the same wrist packet format as hand tracking. This is intended for robots that only need palm/wrist targets and do not have articulated fingers.
+
+The in-headset input mode is fixed to the production mode:
+
+```text
+Full Hands + Controllers
+```
+
+`Full Hands + Controllers` streams hand-tracking wrist/finger landmarks, Quest Touch controller wrist poses, full-body skeleton data, and joystick locomotion data at the same time.
+
+Controller palm data are streamed as UTF-8 CSV lines:
+
+```text
+Left wrist:, x, y, z, qx, qy, qz, qw
+Right wrist:, x, y, z, qx, qy, qz, qw
+Left controller_wrist:, x, y, z, qx, qy, qz, qw
+Right controller_wrist:, x, y, z, qx, qy, qz, qw
+```
+
+- `Left wrist:` / `Right wrist:`: 7 floats -> hand-tracking wrist position and orientation, `x, y, z, qx, qy, qz, qw`.
+- In `Full Hands + Controllers` mode, controller poses use `Left controller_wrist:` / `Right controller_wrist:` so they do not overwrite the real hand wrist poses.
+- When `OVRCameraRig.trackingSpace` is found, controller local poses are transformed into Unity world space. Otherwise the raw tracking-space local pose is sent.
+
+## Joystick locomotion
+
+`JoystickLocomotionProvider` reads the Quest controller thumbsticks while streaming:
+
+- Left thumbstick: moves the streamed body/foot skeleton on the ground plane, relative to the headset/camera facing direction.
+- Right thumbstick X: updates an internal yaw offset for locomotion experiments.
+
+The locomotion offset is applied to `Body root`, `Body joints_pose`, and streamed foot ankle positions before they are sent to the host. This lets the upper body come from VR/body/hand/controller tracking while the whole lower-body/root motion is driven by the controller joystick.
+
 ## Data format
 
 HTS uses the OpenXR hand skeleton rig. Full details can be found in the [Meta documentation](https://developers.meta.com/horizon/documentation/unity/unity-handtracking-interactions/).

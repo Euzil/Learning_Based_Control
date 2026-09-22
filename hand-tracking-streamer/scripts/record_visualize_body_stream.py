@@ -35,12 +35,9 @@ from record_body_stream import (
 from visualizer import (
     StreamReceiver,
     _BODY_HEAD_INDEX,
-    _BODY_HIDDEN_JOINTS,
-    _foot_segments,
     _finger_segments,
     _init_body_lines,
     _init_finger_lines,
-    _init_foot_lines,
     _init_head_axes,
     _init_head_shape,
     _set_axes_from_bounds,
@@ -98,31 +95,27 @@ def run_recording_visualizer(
     plt.ion()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_zlabel("")
+    ax.grid(False)
     try:
         ax.view_init(elev=10, azim=-170, roll=0)
     except TypeError:
         ax.view_init(elev=10, azim=-170)
 
-    right_scatter = ax.scatter([], [], [], c="#E45756", s=20, label="Right")
-    left_scatter = ax.scatter([], [], [], c="#4C78A8", s=20, label="Left")
-    right_foot_scatter = ax.scatter([], [], [], c="#F58518", s=28, label="Right foot")
-    left_foot_scatter = ax.scatter([], [], [], c="#54A24B", s=28, label="Left foot")
-    body_scatter = ax.scatter([], [], [], c="#222222", s=10, label="Body")
-    body_head_scatter = ax.scatter([], [], [], c="#D62728", s=30, marker="o", label="Head")
-    right_wrist = ax.scatter([], [], [], c="#B2333C", s=60, marker="x")
-    left_wrist = ax.scatter([], [], [], c="#2D5E8D", s=60, marker="x")
-    right_ankle = ax.scatter([], [], [], c="#B86100", s=70, marker="^")
-    left_ankle = ax.scatter([], [], [], c="#2E7D32", s=70, marker="^")
-    ax.scatter([0.0], [0.0], [0.0], c="#222222", s=40, marker="o")
-    ax.legend(loc="upper right")
+    right_scatter = ax.scatter([], [], [], c="#E45756", s=14, alpha=0.35)
+    left_scatter = ax.scatter([], [], [], c="#4C78A8", s=14, alpha=0.35)
+    right_controller = ax.scatter([], [], [], c="#8C1D18", s=70, marker="s", label="R controller")
+    left_controller = ax.scatter([], [], [], c="#1E3F66", s=70, marker="s", label="L controller")
+    body_head_scatter = ax.scatter([], [], [], c="#D62728", s=36, marker="o", label="Head")
+    right_wrist = ax.scatter([], [], [], c="#B2333C", s=52, marker="x", label="R hand")
+    left_wrist = ax.scatter([], [], [], c="#2D5E8D", s=52, marker="x", label="L hand")
+    ax.scatter([0.0], [0.0], [0.0], c="#666666", s=24, marker="+")
+    ax.legend(loc="upper right", frameon=False, fontsize=8)
 
     right_lines = _init_finger_lines(ax, color="#FFE692") if show_fingers else []
     left_lines = _init_finger_lines(ax, color="#94FFDF") if show_fingers else []
-    right_foot_lines = _init_foot_lines(ax, color="#F58518")
-    left_foot_lines = _init_foot_lines(ax, color="#54A24B")
     body_lines = _init_body_lines(ax)
     head_axes = _init_head_axes(ax)
     head_shape = _init_head_shape(ax)
@@ -131,8 +124,8 @@ def run_recording_visualizer(
 
     cached_right_points = None
     cached_left_points = None
-    cached_right_foot_points = None
-    cached_left_foot_points = None
+    cached_right_controller_point = None
+    cached_left_controller_point = None
     cached_body_points = None
     ema_center = None
     ema_limit = axis_limit
@@ -153,11 +146,12 @@ def run_recording_visualizer(
             if show_right:
                 right_points = receiver.hands["right"].world_points()
                 if right_points is not None:
-                    right_scatter._offsets3d = (
-                        right_points[:, 0],
-                        right_points[:, 1],
-                        right_points[:, 2],
-                    )
+                    if show_fingers:
+                        right_scatter._offsets3d = (
+                            right_points[:, 0],
+                            right_points[:, 1],
+                            right_points[:, 2],
+                        )
                     cached_right_points = right_points
                 right_wrist_point = receiver.hands["right"].wrist_point()
                 if right_wrist_point is not None:
@@ -176,31 +170,24 @@ def run_recording_visualizer(
                         _finger_segments(right_wrist_point, right_points),
                     )
 
-                right_foot_points = receiver.feet["right"].world_points()
-                if right_foot_points is not None:
-                    right_foot_scatter._offsets3d = (
-                        right_foot_points[:, 0],
-                        right_foot_points[:, 1],
-                        right_foot_points[:, 2],
+                right_controller_point = receiver.controllers["right"].wrist_point()
+                if right_controller_point is not None:
+                    right_controller._offsets3d = (
+                        [right_controller_point[0]],
+                        [right_controller_point[1]],
+                        [right_controller_point[2]],
                     )
-                    cached_right_foot_points = right_foot_points
-                    _update_finger_lines(right_foot_lines, _foot_segments(right_foot_points))
-                right_ankle_point = receiver.feet["right"].wrist_point()
-                if right_ankle_point is not None:
-                    right_ankle._offsets3d = (
-                        [right_ankle_point[0]],
-                        [right_ankle_point[1]],
-                        [right_ankle_point[2]],
-                    )
+                    cached_right_controller_point = right_controller_point
 
             if show_left:
                 left_points = receiver.hands["left"].world_points()
                 if left_points is not None:
-                    left_scatter._offsets3d = (
-                        left_points[:, 0],
-                        left_points[:, 1],
-                        left_points[:, 2],
-                    )
+                    if show_fingers:
+                        left_scatter._offsets3d = (
+                            left_points[:, 0],
+                            left_points[:, 1],
+                            left_points[:, 2],
+                        )
                     cached_left_points = left_points
                 left_wrist_point = receiver.hands["left"].wrist_point()
                 if left_wrist_point is not None:
@@ -219,35 +206,17 @@ def run_recording_visualizer(
                         _finger_segments(left_wrist_point, left_points),
                     )
 
-                left_foot_points = receiver.feet["left"].world_points()
-                if left_foot_points is not None:
-                    left_foot_scatter._offsets3d = (
-                        left_foot_points[:, 0],
-                        left_foot_points[:, 1],
-                        left_foot_points[:, 2],
+                left_controller_point = receiver.controllers["left"].wrist_point()
+                if left_controller_point is not None:
+                    left_controller._offsets3d = (
+                        [left_controller_point[0]],
+                        [left_controller_point[1]],
+                        [left_controller_point[2]],
                     )
-                    cached_left_foot_points = left_foot_points
-                    _update_finger_lines(left_foot_lines, _foot_segments(left_foot_points))
-                left_ankle_point = receiver.feet["left"].wrist_point()
-                if left_ankle_point is not None:
-                    left_ankle._offsets3d = (
-                        [left_ankle_point[0]],
-                        [left_ankle_point[1]],
-                        [left_ankle_point[2]],
-                    )
+                    cached_left_controller_point = left_controller_point
 
             body_points = receiver.body.joints_world
             if body_points is not None:
-                visible_body_points = np.delete(
-                    body_points,
-                    [idx for idx in _BODY_HIDDEN_JOINTS if idx < body_points.shape[0]],
-                    axis=0,
-                )
-                body_scatter._offsets3d = (
-                    visible_body_points[:, 0],
-                    visible_body_points[:, 1],
-                    visible_body_points[:, 2],
-                )
                 if body_points.shape[0] > _BODY_HEAD_INDEX:
                     head_point = body_points[_BODY_HEAD_INDEX]
                     body_head_scatter._offsets3d = (
@@ -270,10 +239,10 @@ def run_recording_visualizer(
                 points_for_bounds.append(cached_right_points)
             if cached_left_points is not None:
                 points_for_bounds.append(cached_left_points)
-            if cached_right_foot_points is not None:
-                points_for_bounds.append(cached_right_foot_points)
-            if cached_left_foot_points is not None:
-                points_for_bounds.append(cached_left_foot_points)
+            if cached_right_controller_point is not None:
+                points_for_bounds.append(cached_right_controller_point.reshape((1, 3)))
+            if cached_left_controller_point is not None:
+                points_for_bounds.append(cached_left_controller_point.reshape((1, 3)))
             if cached_body_points is not None:
                 points_for_bounds.append(cached_body_points)
 

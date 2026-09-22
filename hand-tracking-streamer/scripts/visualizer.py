@@ -215,6 +215,7 @@ def _parse_line(line: str) -> Optional[Tuple[str, str, Tuple[float, ...]]]:
 
     if (
         "wrist" not in label
+        and "controller" not in label
         and "foot" not in label
         and "landmarks" not in label
     ):
@@ -222,7 +223,9 @@ def _parse_line(line: str) -> Optional[Tuple[str, str, Tuple[float, ...]]]:
     side = "right" if "right" in label else "left" if "left" in label else ""
     if not side:
         return None
-    if "foot_landmarks" in label:
+    if "controller_wrist" in label or ("controller" in label and "wrist" in label):
+        kind = "controller_wrist"
+    elif "foot_landmarks" in label:
         kind = "foot_landmarks"
     elif "foot" in label:
         kind = "foot"
@@ -256,6 +259,10 @@ class StreamReceiver:
             "right": HandState("right"),
             "left": HandState("left"),
         }
+        self.controllers: Dict[str, HandState] = {
+            "right": HandState("right"),
+            "left": HandState("left"),
+        }
         self.body = BodyState()
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
@@ -285,6 +292,9 @@ class StreamReceiver:
         elif kind == "landmarks":
             hand = self.hands[side]
             hand.update_landmarks(floats)
+        elif kind == "controller_wrist":
+            controller = self.controllers[side]
+            controller.update_wrist(floats)
         elif kind == "foot":
             foot = self.feet[side]
             foot.update_wrist(floats)
@@ -347,7 +357,7 @@ class StreamReceiver:
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_sock.bind((self.host, self.port))
-        server_sock.listen(1)
+        server_sock.listen(16)
         server_sock.settimeout(0.5)
         logging.info("TCP server listening on %s:%d", self.host, self.port)
         try:
@@ -461,101 +471,61 @@ def _init_foot_lines(ax: plt.Axes, color: str) -> list:
 
 
 _BODY_SEGMENTS = (
-    (1, 2),
-    (2, 3),
-    (3, 4),
-    (4, 5),
-    (5, 6),
-    (6, 7),
-    (5, 8),
-    (8, 9),
-    (9, 10),
-    (10, 11),
-    (11, 12),
-    (5, 13),
-    (13, 14),
-    (14, 15),
-    (15, 16),
-    (16, 17),
-    (1, 70),
-    (70, 71),
-    (71, 72),
-    (72, 73),
-    (73, 74),
-    (74, 75),
-    (75, 76),
-    (1, 77),
-    (77, 78),
-    (78, 79),
-    (79, 80),
-    (80, 81),
-    (81, 82),
-    (82, 83),
-    (19, 24),
-    (24, 25),
-    (25, 26),
-    (26, 27),
-    (27, 28),
-    (19, 29),
-    (29, 30),
-    (30, 31),
-    (31, 32),
-    (32, 33),
-    (19, 34),
-    (34, 35),
-    (35, 36),
-    (36, 37),
-    (37, 38),
-    (19, 39),
-    (39, 40),
-    (40, 41),
-    (41, 42),
-    (42, 43),
-    (19, 20),
-    (20, 21),
-    (21, 22),
-    (22, 23),
-    (45, 50),
-    (50, 51),
-    (51, 52),
-    (52, 53),
-    (53, 54),
-    (45, 55),
-    (55, 56),
-    (56, 57),
-    (57, 58),
-    (58, 59),
-    (45, 60),
-    (60, 61),
-    (61, 62),
-    (62, 63),
-    (63, 64),
-    (45, 65),
-    (65, 66),
-    (66, 67),
-    (67, 68),
-    (68, 69),
-    (45, 46),
-    (46, 47),
-    (47, 48),
-    (48, 49),
+    ((1, 2), "#444444", 2.5),  # hips -> spine lower
+    ((2, 3), "#444444", 2.5),
+    ((3, 4), "#444444", 2.5),
+    ((4, 5), "#444444", 2.5),
+    ((5, 6), "#444444", 2.5),  # chest -> neck
+    ((6, 7), "#D62728", 2.2),  # neck -> head
+    ((6, 8), "#4C78A8", 2.3),
+    ((8, 9), "#4C78A8", 2.3),
+    ((9, 10), "#4C78A8", 2.8),
+    ((10, 11), "#4C78A8", 3.0),
+    ((11, 12), "#4C78A8", 2.8),
+    ((12, 19), "#4C78A8", 2.8),  # forearm twist -> wrist
+    ((19, 18), "#4C78A8", 3.2),  # wrist -> palm
+    ((6, 13), "#E45756", 2.3),
+    ((13, 14), "#E45756", 2.3),
+    ((14, 15), "#E45756", 2.8),
+    ((15, 16), "#E45756", 3.0),
+    ((16, 17), "#E45756", 2.8),
+    ((17, 45), "#E45756", 2.8),  # forearm twist -> wrist
+    ((45, 44), "#E45756", 3.2),  # wrist -> palm
+    ((8, 13), "#444444", 1.8),  # shoulder line
+    ((1, 70), "#54A24B", 2.0),
+    ((70, 71), "#54A24B", 2.0),
+    ((71, 72), "#54A24B", 2.0),
+    ((72, 73), "#54A24B", 2.0),
+    ((73, 74), "#54A24B", 2.0),
+    ((74, 75), "#54A24B", 2.0),
+    ((75, 76), "#54A24B", 2.0),
+    ((1, 77), "#F58518", 2.0),
+    ((77, 78), "#F58518", 2.0),
+    ((78, 79), "#F58518", 2.0),
+    ((79, 80), "#F58518", 2.0),
+    ((80, 81), "#F58518", 2.0),
+    ((81, 82), "#F58518", 2.0),
+    ((82, 83), "#F58518", 2.0),
 )
 
-_BODY_HIDDEN_JOINTS = {0}
+_BODY_HAND_FINGER_JOINTS = set(range(20, 44)) | set(range(46, 70))
+_BODY_HIDDEN_JOINTS = {0} | _BODY_HAND_FINGER_JOINTS
 _BODY_HEAD_INDEX = 7
 
 
 def _init_body_lines(ax: plt.Axes) -> list:
     lines = []
-    for _ in _BODY_SEGMENTS:
-        (line,) = ax.plot([], [], [], color="#222222", linewidth=1.5, alpha=0.8)
+    for _, color, linewidth in _BODY_SEGMENTS:
+        (line,) = ax.plot([], [], [], color=color, linewidth=linewidth, alpha=0.85)
         lines.append(line)
     return lines
 
 
 def _update_body_lines(lines: list, points: np.ndarray) -> None:
-    for line, (start_idx, end_idx) in zip(lines, _BODY_SEGMENTS):
+    for line, ((start_idx, end_idx), _, _) in zip(lines, _BODY_SEGMENTS):
         if points.shape[0] <= max(start_idx, end_idx):
+            line.set_data([], [])
+            line.set_3d_properties([])
             continue
         start = points[start_idx]
         end = points[end_idx]
@@ -646,31 +616,27 @@ def run_visualizer(
     plt.ion()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_zlabel("")
+    ax.grid(False)
     try:
         ax.view_init(elev=10, azim=-170, roll=0)
     except TypeError:
         ax.view_init(elev=10, azim=-170)
 
-    right_scatter = ax.scatter([], [], [], c="#E45756", s=20, label="Right")
-    left_scatter = ax.scatter([], [], [], c="#4C78A8", s=20, label="Left")
-    right_foot_scatter = ax.scatter([], [], [], c="#F58518", s=28, label="Right foot")
-    left_foot_scatter = ax.scatter([], [], [], c="#54A24B", s=28, label="Left foot")
-    body_scatter = ax.scatter([], [], [], c="#222222", s=10, label="Body")
-    body_head_scatter = ax.scatter([], [], [], c="#D62728", s=30, marker="o", label="Head")
-    right_wrist = ax.scatter([], [], [], c="#B2333C", s=60, marker="x")
-    left_wrist = ax.scatter([], [], [], c="#2D5E8D", s=60, marker="x")
-    right_ankle = ax.scatter([], [], [], c="#B86100", s=70, marker="^")
-    left_ankle = ax.scatter([], [], [], c="#2E7D32", s=70, marker="^")
-    ax.scatter([0.0], [0.0], [0.0], c="#222222", s=40, marker="o")
-    ax.legend(loc="upper right")
+    right_scatter = ax.scatter([], [], [], c="#E45756", s=14, alpha=0.35)
+    left_scatter = ax.scatter([], [], [], c="#4C78A8", s=14, alpha=0.35)
+    right_controller = ax.scatter([], [], [], c="#8C1D18", s=70, marker="s", label="R controller")
+    left_controller = ax.scatter([], [], [], c="#1E3F66", s=70, marker="s", label="L controller")
+    body_head_scatter = ax.scatter([], [], [], c="#D62728", s=36, marker="o", label="Head")
+    right_wrist = ax.scatter([], [], [], c="#B2333C", s=52, marker="x", label="R hand")
+    left_wrist = ax.scatter([], [], [], c="#2D5E8D", s=52, marker="x", label="L hand")
+    ax.scatter([0.0], [0.0], [0.0], c="#666666", s=24, marker="+")
+    ax.legend(loc="upper right", frameon=False, fontsize=8)
 
     right_lines = _init_finger_lines(ax, color="#FFE692") if show_fingers else []
     left_lines = _init_finger_lines(ax, color="#94FFDF") if show_fingers else []
-    right_foot_lines = _init_foot_lines(ax, color="#F58518")
-    left_foot_lines = _init_foot_lines(ax, color="#54A24B")
     body_lines = _init_body_lines(ax)
     head_axes = _init_head_axes(ax)
     head_shape = _init_head_shape(ax)
@@ -679,8 +645,8 @@ def run_visualizer(
 
     cached_right_points = None
     cached_left_points = None
-    cached_right_foot_points = None
-    cached_left_foot_points = None
+    cached_right_controller_point = None
+    cached_left_controller_point = None
     cached_body_points = None
     ema_center = None
     ema_limit = axis_limit
@@ -690,11 +656,12 @@ def run_visualizer(
             if show_right:
                 right_points = receiver.hands["right"].world_points()
                 if right_points is not None:
-                    right_scatter._offsets3d = (
-                        right_points[:, 0],
-                        right_points[:, 1],
-                        right_points[:, 2],
-                    )
+                    if show_fingers:
+                        right_scatter._offsets3d = (
+                            right_points[:, 0],
+                            right_points[:, 1],
+                            right_points[:, 2],
+                        )
                     cached_right_points = right_points
                 right_wrist_point = receiver.hands["right"].wrist_point()
                 if right_wrist_point is not None:
@@ -711,31 +678,24 @@ def run_visualizer(
                     segments = _finger_segments(right_wrist_point, right_points)
                     _update_finger_lines(right_lines, segments)
 
-                right_foot_points = receiver.feet["right"].world_points()
-                if right_foot_points is not None:
-                    right_foot_scatter._offsets3d = (
-                        right_foot_points[:, 0],
-                        right_foot_points[:, 1],
-                        right_foot_points[:, 2],
+                right_controller_point = receiver.controllers["right"].wrist_point()
+                if right_controller_point is not None:
+                    right_controller._offsets3d = (
+                        [right_controller_point[0]],
+                        [right_controller_point[1]],
+                        [right_controller_point[2]],
                     )
-                    cached_right_foot_points = right_foot_points
-                    _update_finger_lines(right_foot_lines, _foot_segments(right_foot_points))
-                right_ankle_point = receiver.feet["right"].wrist_point()
-                if right_ankle_point is not None:
-                    right_ankle._offsets3d = (
-                        [right_ankle_point[0]],
-                        [right_ankle_point[1]],
-                        [right_ankle_point[2]],
-                    )
+                    cached_right_controller_point = right_controller_point
 
             if show_left:
                 left_points = receiver.hands["left"].world_points()
                 if left_points is not None:
-                    left_scatter._offsets3d = (
-                        left_points[:, 0],
-                        left_points[:, 1],
-                        left_points[:, 2],
-                    )
+                    if show_fingers:
+                        left_scatter._offsets3d = (
+                            left_points[:, 0],
+                            left_points[:, 1],
+                            left_points[:, 2],
+                        )
                     cached_left_points = left_points
                 left_wrist_point = receiver.hands["left"].wrist_point()
                 if left_wrist_point is not None:
@@ -752,35 +712,17 @@ def run_visualizer(
                     segments = _finger_segments(left_wrist_point, left_points)
                     _update_finger_lines(left_lines, segments)
 
-                left_foot_points = receiver.feet["left"].world_points()
-                if left_foot_points is not None:
-                    left_foot_scatter._offsets3d = (
-                        left_foot_points[:, 0],
-                        left_foot_points[:, 1],
-                        left_foot_points[:, 2],
+                left_controller_point = receiver.controllers["left"].wrist_point()
+                if left_controller_point is not None:
+                    left_controller._offsets3d = (
+                        [left_controller_point[0]],
+                        [left_controller_point[1]],
+                        [left_controller_point[2]],
                     )
-                    cached_left_foot_points = left_foot_points
-                    _update_finger_lines(left_foot_lines, _foot_segments(left_foot_points))
-                left_ankle_point = receiver.feet["left"].wrist_point()
-                if left_ankle_point is not None:
-                    left_ankle._offsets3d = (
-                        [left_ankle_point[0]],
-                        [left_ankle_point[1]],
-                        [left_ankle_point[2]],
-                    )
+                    cached_left_controller_point = left_controller_point
 
             body_points = receiver.body.joints_world
             if body_points is not None:
-                visible_body_points = np.delete(
-                    body_points,
-                    [idx for idx in _BODY_HIDDEN_JOINTS if idx < body_points.shape[0]],
-                    axis=0,
-                )
-                body_scatter._offsets3d = (
-                    visible_body_points[:, 0],
-                    visible_body_points[:, 1],
-                    visible_body_points[:, 2],
-                )
                 if body_points.shape[0] > _BODY_HEAD_INDEX:
                     head_point = body_points[_BODY_HEAD_INDEX]
                     body_head_scatter._offsets3d = (
@@ -807,10 +749,10 @@ def run_visualizer(
                 points_for_bounds.append(cached_right_points)
             if cached_left_points is not None:
                 points_for_bounds.append(cached_left_points)
-            if cached_right_foot_points is not None:
-                points_for_bounds.append(cached_right_foot_points)
-            if cached_left_foot_points is not None:
-                points_for_bounds.append(cached_left_foot_points)
+            if cached_right_controller_point is not None:
+                points_for_bounds.append(cached_right_controller_point.reshape((1, 3)))
+            if cached_left_controller_point is not None:
+                points_for_bounds.append(cached_left_controller_point.reshape((1, 3)))
             if cached_body_points is not None:
                 points_for_bounds.append(cached_body_points)
 

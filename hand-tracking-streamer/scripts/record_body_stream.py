@@ -1,9 +1,9 @@
-"""Record full-body landmark streams from Unity/Quest to an NPZ file.
+"""Record upper-body landmark streams from Unity/Quest to an NPZ file.
 
 The recorder expects the body messages produced by BodyLandmarkStreamer:
 
     Body root:, x, y, z, qx, qy, qz, qw
-    Body joints_pose:, [x, y, z, qx, qy, qz, qw] * 84
+    Body joints_pose:, [x, y, z, qx, qy, qz, qw] * 70
 
 Examples:
     python scripts/record_body_stream.py --protocol tcp --host localhost --port 8000
@@ -27,7 +27,7 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit("Missing dependency. Please install numpy: pip install numpy") from exc
 
 
-BODY_JOINT_COUNT = 84
+BODY_JOINT_COUNT = 70
 ROOT_STRIDE = 7
 JOINT_POSE_STRIDE = 7
 
@@ -329,7 +329,7 @@ def main() -> None:
         "--expected-joints",
         type=int,
         default=BODY_JOINT_COUNT,
-        help="Expected full-body joint count (default: 84).",
+        help="Expected upper-body joint count (default: 70).",
     )
     parser.add_argument(
         "--log-level",
@@ -355,7 +355,7 @@ def main() -> None:
         "port": port,
         "expected_joints": args.expected_joints,
         "created_unix_time": time.time(),
-        "format": "timestamps[N], root_poses[N,7], joint_poses[N,84,7]",
+        "format": "timestamps[N], root_poses[N,7], joint_poses[N,70,7]",
     }
 
     try:

@@ -1,4 +1,4 @@
-"""Record and visualize Unity/Quest full-body streams at the same time.
+"""Record and visualize Unity/Quest upper-body streams at the same time.
 
 This combines the live Matplotlib view from visualizer.py with the NPZ recorder
 from record_body_stream.py.
@@ -287,7 +287,7 @@ def run_recording_visualizer(
                 "port": port,
                 "expected_joints": expected_joints,
                 "created_unix_time": time.time(),
-                "format": "timestamps[N], root_poses[N,7], joint_poses[N,84,7]",
+                "format": "timestamps[N], root_poses[N,7], joint_poses[N,70,7]",
                 "visualized_live": True,
             }
             recorder.save(output_path, metadata)
@@ -333,17 +333,17 @@ def main() -> None:
         "--expected-joints",
         type=int,
         default=BODY_JOINT_COUNT,
-        help="Expected full-body joint count (default: 84).",
+        help="Expected upper-body joint count (default: 70).",
     )
     parser.add_argument(
         "--left-only",
         action="store_true",
-        help="Only visualize the left hand/foot streams.",
+        help="Only visualize the left hand stream.",
     )
     parser.add_argument(
         "--right-only",
         action="store_true",
-        help="Only visualize the right hand/foot streams.",
+        help="Only visualize the right hand stream.",
     )
     parser.add_argument(
         "--axis-limit",

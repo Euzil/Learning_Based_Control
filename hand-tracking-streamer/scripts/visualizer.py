@@ -1,4 +1,4 @@
-"""Matplotlib visualizer for HTS hand, foot, and full-body landmarks.
+"""Matplotlib visualizer for HTS hands, controllers, and upper-body landmarks.
 
 Usage:
     python visualizer.py --protocol udp --host 0.0.0.0 --port 9000
@@ -158,7 +158,7 @@ class HandState:
 
 @dataclass
 class BodyState:
-    """State for the full-body stream."""
+    """State for the upper-body stream."""
 
     root_position: Optional[np.ndarray] = None
     root_quat: Optional[np.ndarray] = None
@@ -196,6 +196,9 @@ def _parse_line(line: str) -> Optional[Tuple[str, str, Tuple[float, ...]]]:
     if not parts:
         return None
     label = parts[0].lower()
+    if "foot" in label:
+        return None
+
     if "body root" in label or "body joints" in label:
         if "joints_pose" in label:
             kind = "body_joints_pose"
@@ -216,7 +219,6 @@ def _parse_line(line: str) -> Optional[Tuple[str, str, Tuple[float, ...]]]:
     if (
         "wrist" not in label
         and "controller" not in label
-        and "foot" not in label
         and "landmarks" not in label
     ):
         return None
@@ -225,10 +227,6 @@ def _parse_line(line: str) -> Optional[Tuple[str, str, Tuple[float, ...]]]:
         return None
     if "controller_wrist" in label or ("controller" in label and "wrist" in label):
         kind = "controller_wrist"
-    elif "foot_landmarks" in label:
-        kind = "foot_landmarks"
-    elif "foot" in label:
-        kind = "foot"
     elif "wrist" in label:
         kind = "wrist"
     else:
@@ -252,10 +250,6 @@ class StreamReceiver:
         self.host = host
         self.port = port
         self.hands: Dict[str, HandState] = {
-            "right": HandState("right"),
-            "left": HandState("left"),
-        }
-        self.feet: Dict[str, HandState] = {
             "right": HandState("right"),
             "left": HandState("left"),
         }
@@ -295,12 +289,6 @@ class StreamReceiver:
         elif kind == "controller_wrist":
             controller = self.controllers[side]
             controller.update_wrist(floats)
-        elif kind == "foot":
-            foot = self.feet[side]
-            foot.update_wrist(floats)
-        elif kind == "foot_landmarks":
-            foot = self.feet[side]
-            foot.update_landmarks(floats)
         elif kind == "body_root":
             self.body.update_root(floats)
         elif kind == "body_joints_pose":
@@ -455,21 +443,6 @@ def _update_finger_lines(lines: list, segments) -> None:
         line.set_3d_properties([start[2], end[2]])
 
 
-def _foot_segments(points: np.ndarray) -> Tuple[Tuple[np.ndarray, np.ndarray], ...]:
-    """Return line segments for the streamed lower-leg/foot chain."""
-    if points.shape[0] < 7:
-        return tuple()
-    return tuple((points[i], points[i + 1]) for i in range(6))
-
-
-def _init_foot_lines(ax: plt.Axes, color: str) -> list:
-    lines = []
-    for _ in range(6):
-        (line,) = ax.plot([], [], [], color=color, linewidth=3)
-        lines.append(line)
-    return lines
-
-
 _BODY_SEGMENTS = (
     ((1, 2), "#444444", 2.5),  # hips -> spine lower
     ((2, 3), "#444444", 2.5),
@@ -492,20 +465,6 @@ _BODY_SEGMENTS = (
     ((17, 45), "#E45756", 2.8),  # forearm twist -> wrist
     ((45, 44), "#E45756", 3.2),  # wrist -> palm
     ((8, 13), "#444444", 1.8),  # shoulder line
-    ((1, 70), "#54A24B", 2.0),
-    ((70, 71), "#54A24B", 2.0),
-    ((71, 72), "#54A24B", 2.0),
-    ((72, 73), "#54A24B", 2.0),
-    ((73, 74), "#54A24B", 2.0),
-    ((74, 75), "#54A24B", 2.0),
-    ((75, 76), "#54A24B", 2.0),
-    ((1, 77), "#F58518", 2.0),
-    ((77, 78), "#F58518", 2.0),
-    ((78, 79), "#F58518", 2.0),
-    ((79, 80), "#F58518", 2.0),
-    ((80, 81), "#F58518", 2.0),
-    ((81, 82), "#F58518", 2.0),
-    ((82, 83), "#F58518", 2.0),
 )
 
 _BODY_HAND_FINGER_JOINTS = set(range(20, 44)) | set(range(46, 70))

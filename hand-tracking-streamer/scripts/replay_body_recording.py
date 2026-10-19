@@ -1,10 +1,10 @@
-"""Replay recorded Unity/Quest full-body NPZ files for visual inspection.
+"""Replay recorded Unity/Quest upper-body NPZ files for visual inspection.
 
 The input file should be produced by record_body_stream.py or
 record_visualize_body_stream.py and contain:
 
     timestamps[N]
-    joint_poses[N, 84, 7]
+    joint_poses[N, 70, 7]
 
 Examples:
     python scripts/replay_body_recording.py recordings/body_motion_20260812_120000.npz

@@ -12,7 +12,7 @@ The in-headset input mode is fixed to the production mode:
 Full Hands + Controllers
 ```
 
-`Full Hands + Controllers` streams hand-tracking wrist/finger landmarks, Quest Touch controller wrist poses, full-body skeleton data, and joystick locomotion data at the same time.
+`Full Hands + Controllers` streams hand-tracking wrist/finger landmarks, Quest Touch controller wrist poses, upper-body skeleton data, and joystick locomotion data at the same time.
 
 Controller palm data are streamed as UTF-8 CSV lines:
 
@@ -31,10 +31,11 @@ Right controller_wrist:, x, y, z, qx, qy, qz, qw
 
 `JoystickLocomotionProvider` reads the Quest controller thumbsticks while streaming:
 
-- Left thumbstick: moves the streamed body/foot skeleton on the ground plane, relative to the headset/camera facing direction.
+- Left thumbstick: moves the streamed upper-body skeleton on the ground plane, relative to the headset/camera facing direction.
 - Right thumbstick X: updates an internal yaw offset for locomotion experiments.
+- Right thumbstick Y: changes the streamed vertical body offset for robot crouch/stand motion. In Unity this is applied on the world Y axis; downstream robot code can map it to the robot vertical Z axis if needed.
 
-The locomotion offset is applied to `Body root`, `Body joints_pose`, and streamed foot ankle positions before they are sent to the host. This lets the upper body come from VR/body/hand/controller tracking while the whole lower-body/root motion is driven by the controller joystick.
+The locomotion offset is applied to `Body root`, upper-body `Body joints_pose`, head pose, hand wrists/fingers, and controller wrist poses before they are sent to the host. Lower-body gait and leg pose are intentionally left to the downstream robot controller.
 
 ## Data format
 
@@ -86,51 +87,21 @@ Right landmarks:, 0.0000, 0.0000, 0.0000, -0.0275, -0.0197, 0.0362, -0.0438, -0.
 >[!IMPORTANT]
 > Data streamed from HTS follows Unity's left-hand coordinate convention. For most applications, you will want to flip the incoming data's Y-axis for the right-hand coordinate convention.
 
-### Experimental foot/body tracking format
+### Upper-body tracking format
 
-`FootLandmarkStreamer` can stream foot and lower-leg joints from Meta body tracking when a scene GameObject provides an `Oculus.Interaction.Body.Input.IBody` source configured for the `FullBody` joint set.
-
-Tracked body joint order per foot:
-
-```text
-[streamed index: body joint name]
-0: LegUpper
-1: LegLower
-2: FootAnkleTwist
-3: FootAnkle
-4: FootSubtalar
-5: FootTransverse
-6: FootBall
-```
-
-Foot data are streamed as UTF-8 CSV lines:
-
-```text
-Left foot:, 0.2502, 0.1200, 0.2540, 0.194, -0.116, 0.094, -0.970
-Left foot_landmarks:, 0.0000, 0.4100, 0.0200, 0.0000, 0.2100, 0.0100, 0.0000, 0.0200, 0.0000, 0.0000, 0.0000, 0.0000, 0.0100, -0.0300, 0.0300, 0.0200, -0.0500, 0.0700, 0.0300, -0.0700, 0.1100
-```
-
-- `Left foot:` / `Right foot:`: 7 floats -> ankle pose in world space, `x, y, z, qx, qy, qz, qw`.
-- `Left foot_landmarks:` / `Right foot_landmarks:`: 21 floats -> `[x, y, z] * 7`, relative to the ankle pose, in the joint order listed above.
-
->[!NOTE]
-> Meta body tracking does not provide hand-style toe landmarks. The foot stream exposes lower-body skeleton joints inferred by the headset/body tracking stack, so it is suitable for ankle/foot pose and coarse gait telemetry, not precise toe articulation.
-
-### Full-body tracking format
-
-`BodyLandmarkStreamer` streams the Meta `FullBody` skeleton from an `Oculus.Interaction.Body.Input.IBody` source. Add this component once to the GameObject that has the `Body` component.
+`BodyLandmarkStreamer` streams the Meta upper-body skeleton from an `Oculus.Interaction.Body.Input.IBody` source. Add this component once to the GameObject that has the `Body` component.
 
 Full-body data are streamed as UTF-8 CSV lines:
 
 ```text
 Body root:, x, y, z, qx, qy, qz, qw
-Body joints_pose:, [x, y, z, qx, qy, qz, qw] * 84
+Body joints_pose:, [x, y, z, qx, qy, qz, qw] * 70
 ```
 
 - `Body root:`: 7 floats -> body root pose in world space.
-- `Body joints_pose:`: 588 floats -> 84 body joint world poses.
-- Joint order is the SDK `BodyJointId` enum order from `Body_Root`/index `0` through `Body_RightFootBall`/index `83`.
-- If rotations are disabled on the component, the second line becomes `Body joints:` with 252 floats -> `[x, y, z] * 84`.
+- `Body joints_pose:`: 490 floats -> 70 upper-body joint world poses.
+- Joint order follows the SDK `BodyJointId` order from `Body_Root`/index `0` through `Body_RightHandLittleTip`/index `69`.
+- If rotations are disabled on the component, the second line becomes `Body joints:` with 210 floats -> `[x, y, z] * 70`.
 
 ## UDP connection
 

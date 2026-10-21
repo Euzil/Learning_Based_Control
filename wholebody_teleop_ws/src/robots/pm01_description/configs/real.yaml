@@ -1,0 +1,78 @@
+scene: none
+robots:
+  - name: pm01
+    safty:
+      max_joint_delta: 2.0    # rad      
+      max_joint_vel: 100      # rad/s
+      max_imu_tilt: 0.6
+      max_obs_value: 1e3       
+    joints:
+      state_topic: /hardware/joint_state
+      command_topic: /hardware/joint_command
+      root_joint: root_joint
+      names:
+        - hip_pitch_l_joint
+        - hip_roll_l_joint
+        - hip_yaw_l_joint
+        - knee_pitch_l_joint
+        - ankle_pitch_l_joint
+        - ankle_roll_l_joint
+        - hip_pitch_r_joint
+        - hip_roll_r_joint
+        - hip_yaw_r_joint
+        - knee_pitch_r_joint
+        - ankle_pitch_r_joint
+        - ankle_roll_r_joint
+        - waist_yaw_joint
+        - shoulder_pitch_l_joint
+        - shoulder_roll_l_joint
+        - shoulder_yaw_l_joint
+        - elbow_pitch_l_joint
+        - elbow_yaw_l_joint
+        - shoulder_pitch_r_joint
+        - shoulder_roll_r_joint
+        - shoulder_yaw_r_joint
+        - elbow_pitch_r_joint
+        - elbow_yaw_r_joint
+        - head_yaw_joint
+      default_stiffness: [
+        70, 50, 50, 70, 20, 20,
+        70, 50, 50, 70, 20, 20,
+        200,
+        250, 250, 250, 250, 250,
+        250, 250, 250, 250, 250,
+        100
+      ]
+      default_damping: [
+        7.0, 5.0, 5.0, 7.0, 0.2, 0.2,
+        7.0, 5.0, 5.0, 7.0, 0.2, 0.2,
+        1,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        1
+      ]
+      default_position: [
+        -0.24, 0.0, 0.0, 0.48, -0.24, 0.0,
+        -0.24, 0.0, 0.0, 0.48, -0.24, 0.0,
+        0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0
+      ]
+    frames:
+      base: base_link
+      left_foot: foot_l_link
+      right_foot: foot_r_link
+    sensors:
+      imu_sensors:
+        - name: base_imu
+          topic: /hardware/imu_info
+      # skin_sensors:
+      #   - name: p1e
+      #     topic: p1e                    # -> /pm01/p1e
+      #   - name: p2e
+      #     topic: p2e
+      #   - name: p3e
+      #     topic: p3e
+      #   - name: p4e
+      #     topic: p4e

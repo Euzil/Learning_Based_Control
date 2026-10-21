@@ -1,0 +1,35 @@
+<mujoco model="pm01_scene">
+  <include file="../xml/pm01_cylinder_collision.xml"/>
+  
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
+  <compiler angle="radian" meshdir="../meshes" assetdir="../assets" eulerseq="zyx" autolimits="true" />
+
+  <!-- skin plugin: see mujoco_skin package -->
+  <extension>
+    <plugin plugin="mujoco.sensor.skin" />
+    <plugin plugin="mujoco.sensor.ray_caster" />
+    <plugin plugin="mujoco.sensor.ray_camera" />
+  </extension>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-130" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <hfield name="rough_hf"
+            size="10.0 10.0 0.3 0.002"
+            file="../assets/height_field.png"/>
+  </asset>
+
+  <worldbody>
+    <geom name="parkour_terrain" type="hfield" hfield="rough_hf"
+          contype="1" conaffinity="1" condim="3"
+          friction="1.0 0.01 0.001"
+          solref="0.03 1" solimp="0.95 0.99 0.001"
+          margin="0.005" rgba="0.7 0.7 0.7 1"/>
+  </worldbody>
+
+</mujoco>

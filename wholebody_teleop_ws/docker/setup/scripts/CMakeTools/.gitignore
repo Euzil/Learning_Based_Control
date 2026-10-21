@@ -1,0 +1,9 @@
+build
+build-*
+install
+*~
+*.so
+*.swp
+GitLabCICDInit
+GitLabCICDTools
+temp

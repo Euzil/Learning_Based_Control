@@ -1,0 +1,290 @@
+# - Try to find the library
+# Once done this will define
+#  <name>_FOUND             System has <name>
+#  <name>_INCLUDE_DIRS      The <nameE> include directories
+#  <name>_LIBRARIES         The libraries needed to use <name>
+#  <name>_DEFINITIONS       Compiler switches required for using <name>
+
+#########################################################################################
+#
+#   ATTENTION: Automatically created by cmake in 'ics_create_find_module()'
+#
+#   Manual modifications in this file will be overwritten!
+#
+#########################################################################################
+
+# function needed to create local scope such that we don't pollute the global scope of find package scripts
+function(createPackageVars)
+    set(name @FIND_MODULE_NAME@)
+    set(suffixes @FIND_MODULE_PATH_SUFFIXES@)
+    set(incRoot @FIND_MODULE_INCLUDE_ROOT@)
+
+    # Libaries of this module; order is important; ideally should only contain one library.
+    set(libs @FIND_MODULE_LIBRARIES@)
+
+    # Libraries needed by this module; general libraries which don't need a cmake find. 
+    set(extLibs @FIND_MODULE_EXTERNAL_LIBRARIES@)
+
+    # Libraries needed by this module; libraries which need a cmake find module.
+    # NOTE: If the cmake find module has a non standard format, you need to add the find module routine
+    # manually into this file.
+    set(deps @FIND_MODULE_FIND_PACKAGES@)
+
+    set(incHints @FIND_MODULE_INCLUDE_HINTS@)
+    set(libHints @FIND_MODULE_LIBRARY_HINTS@)
+        
+    
+    set(isBuiltInCurrentProject FALSE)
+    set(firstRun TRUE)
+    
+    foreach(lib ${libs})
+        if(TARGET ${lib})
+            if(NOT firstRun)
+                message(FATAL_ERROR "The cmake package '${name}' is built in the current project but seems to have an incorrect lib list in its find package module!")
+            endif()
+        endif()
+        
+        if(NOT TARGET ${lib} AND isBuiltInCurrentProject)
+            message(FATAL_ERROR "The cmake package '${name}' is built in the current project but seems to have an incorrect lib list in its find package module!")
+        endif()
+        
+        if(TARGET ${lib})
+            message(STATUS "Detected lib '${lib}' of the cmake package '${name}' in the current project.")
+            
+            # get the include dirs of the targets
+            get_target_property(temp ${lib} INCLUDE_DIRECTORIES)
+            list(APPEND localIncDirs ${temp})
+            
+            set(isBuiltInCurrentProject TRUE)
+        endif()
+        set(firstRun FALSE)
+    endforeach()
+
+    #string(TOUPPER ${name} nameUpperCase)
+    #message(STATUS ${nameUpperCase})
+
+    if(isBuiltInCurrentProject)
+        #message(STATUS "ROOT: ${CMAKE_SOURCE_DIR}")
+        #message(STATUS ${localIncDirs})
+
+        # find the include path of the package
+        find_path(
+            incDir ${incRoot}
+            HINTS ${localIncDirs}
+        )
+        set(${name}_INCLUDE_DIR ${incDir})
+        unset(incDir CACHE)
+
+        set(${name}_LIBRARY ${libs})
+    else()
+        # find the include path
+        find_path(
+            incDir ${incRoot}
+            HINTS ${incHints}
+            PATH_SUFFIXES ${suffixes}
+        )
+        set(${name}_INCLUDE_DIR ${incDir})
+        unset(incDir CACHE)
+
+        # find the specified libraries
+        foreach(lib ${libs})
+            #message("lib = ${lib}")
+
+            # find library
+            find_library(
+                libPath ${lib}
+                HINTS ${libHints}
+                PATH_SUFFIXES ${suffixes}
+            )
+
+            if(NOT libPath)
+                message(WARNING "Couldn't find lib ${lib}")
+            endif()
+
+            list(APPEND ${name}_LIBRARY ${libPath})	
+
+            #message("libPath = ${libPath}")
+            unset(libPath CACHE)
+        endforeach()
+    endif()    
+
+    #message(${incDir})
+    #message(${libPaths})
+
+    set(${name}_DEFINITION)
+    set(${name}_INCLUDE_DIRS ${${name}_INCLUDE_DIR})
+    set(${name}_LIBRARIES ${${name}_LIBRARY}) 
+    set(${name}_DEFINITIONS ${${name}_DEFINITION})
+
+    # add dependencies
+    foreach(dep ${deps})
+        message(STATUS "Find cmake package '${dep}'... ")
+        find_package(${dep} REQUIRED)
+
+        string(TOUPPER ${dep} depUpper)
+        #message(STATUS ${depUpper})
+        
+        set(found FALSE)
+        
+        if(DEFINED ${dep}_FOUND)
+            set(found ${${dep}_FOUND})
+        endif()
+        
+        if(DEFINED ${depUpper}_FOUND)
+            set(found ${${depUpper}_FOUND})
+        endif()
+        
+        if(NOT found)
+            message(WARNING "Couldn't find cmake package ${dep}")
+        endif()
+        
+         
+        if(DEFINED ${dep}_INCLUDE_DIR)
+            list(APPEND ${name}_INCLUDE_DIRS ${${dep}_INCLUDE_DIR})
+        endif()
+        
+        if(DEFINED ${depUpper}_INCLUDE_DIR)
+            list(APPEND ${name}_INCLUDE_DIRS ${${depUpper}_INCLUDE_DIR})
+        endif()
+        
+        if(DEFINED ${dep}_INCLUDE_DIRS)
+            list(APPEND ${name}_INCLUDE_DIRS ${${dep}_INCLUDE_DIRS})
+        endif()
+        
+        if(DEFINED ${depUpper}_INCLUDE_DIRS)
+            list(APPEND ${name}_INCLUDE_DIRS ${${depUpper}_INCLUDE_DIRS})
+        endif()
+        
+        
+        if(DEFINED ${dep}_LIBRARY)
+            list(APPEND ${name}_LIBRARIES ${${dep}_LIBRARY})
+        endif()
+        
+        if(DEFINED ${depUpper}_LIBRARY)
+            list(APPEND ${name}_LIBRARIES ${${depUpper}_LIBRARY})
+        endif()
+        
+        if(DEFINED ${dep}_LIBRARIES)
+            list(APPEND ${name}_LIBRARIES ${${dep}_LIBRARIES})
+        endif()
+        
+        if(DEFINED ${depUpper}_LIBRARIES)
+            list(APPEND ${name}_LIBRARIES ${${depUpper}_LIBRARIES})
+        endif()
+        
+        
+        if(DEFINED ${dep}_DEFINITION)
+            list(APPEND ${name}_DEFINITIONS ${${dep}_DEFINITION})
+        endif()
+        
+        if(DEFINED ${depUpper}_DEFINITION)
+            list(APPEND ${name}_DEFINITIONS ${${depUpper}_DEFINITION})
+        endif()
+        
+        if(DEFINED ${dep}_DEFINITIONS)
+            list(APPEND ${name}_DEFINITIONS ${${dep}_DEFINITIONS})
+        endif()
+        
+        if(DEFINED ${depUpper}_LIBRARIES)
+            list(APPEND ${name}_DEFINITIONS ${${depUpper}_DEFINITIONS})
+        endif()	
+
+    endforeach()   
+        
+#     get_cmake_property(_variableNames VARIABLES)
+#     foreach (_variableName ${_variableNames})
+#         message(STATUS "${_variableName}")
+#     endforeach()
+
+    # add external lib dependencies for libs in standard seach path
+    list(APPEND ${name}_LIBRARIES ${extLibs})
+
+    # remove duplicates
+    if(${name}_DEFINITIONS)
+        list(REMOVE_DUPLICATES ${name}_DEFINITIONS)
+    endif()
+    
+    if(${name}_INCLUDE_DIRS)
+        list(REMOVE_DUPLICATES ${name}_INCLUDE_DIRS)
+    endif()
+    
+    if(${name}_LIBRARIES)
+        list(REMOVE_DUPLICATES ${name}_LIBRARIES)
+    endif()
+
+    
+    # check
+    include(FindPackageHandleStandardArgs)
+
+    find_package_handle_standard_args(${name} DEFAULT_MSG
+        ${name}_INCLUDE_DIRS
+        ${name}_LIBRARIES
+    )
+
+    mark_as_advanced(
+        ${name}_INCLUDE_DIRS
+        ${name}_LIBRARIES
+    )
+
+    # set found
+    set(${name}_FOUND TRUE)
+
+    #get_cmake_property(_variableNames VARIABLES)
+    #foreach (_variableName ${_variableNames})
+    #	    message(STATUS "${_variableName}")
+    #endforeach()
+
+#     message(STATUS "${name}_DEFINITIONS = " ${${name}_DEFINITIONS})
+#     message(STATUS "${name}_INCLUDE_DIRS = " ${${name}_INCLUDE_DIRS})
+#     message(STATUS "${name}_LIBRARIES = " ${${name}_LIBRARIES})
+
+
+    # export
+    set(${name}_FOUND 
+        ${${name}_FOUND}
+        PARENT_SCOPE
+    )
+            
+    set(${name}_INCLUDE_DIRS 
+        ${${name}_INCLUDE_DIRS}
+        PARENT_SCOPE
+    )
+
+    set(${name}_LIBRARIES
+        ${${name}_LIBRARIES}
+        PARENT_SCOPE
+    )
+
+    set(${name}_DEFINITIONS
+        ${${name}_DEFINITIONS}
+        PARENT_SCOPE
+    )
+
+    string(TOUPPER ${name} nameUpper)    
+    
+    set(${nameUpper}_FOUND 
+        ${${name}_FOUND}
+        PARENT_SCOPE
+    )
+    
+    set(${nameUpper}_INCLUDE_DIRS 
+        ${${name}_INCLUDE_DIRS}
+        PARENT_SCOPE
+    )
+
+    set(${nameUpper}_LIBRARIES
+        ${${name}_LIBRARIES}
+        PARENT_SCOPE
+    )
+    
+    set(${nameUpper}_DEFINITIONS
+        ${${name}_DEFINITIONS}
+        PARENT_SCOPE
+    )
+    
+    
+endfunction()
+
+
+# create the include dir and lib variables for this package
+createPackageVars()

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="hoverboard">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.006" radius="0.0175"/>
+      </geometry>
+      <origin rpy="0.0 1.57079632679 -1.57079632679" xyz="0.0 0.0 0.0"/>
+    </visual>
+    <collision>
+      <origin rpy="0.0 1.57079632679 -1.57079632679" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <cylinder length="0.006" radius="0.0175"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.00577"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <inertia ixx="4.59e-07" ixy="0.0" ixz="0.0" iyy="8.83e-07" iyz="0.0" izz="4.59e-07"/>
+    </inertial>
+  </link>
+
+  <link name="right_plate_link">
+    <visual>
+      <origin rpy="0 0 -1.57079632679" xyz="0 0.1105 0"/>
+      <geometry>
+        <mesh filename="../meshes/right_plate_vis.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.221 0.186 0.08"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.00920683" ixy="0.0" ixz="0.0" iyy="0.00683267" iyz="0.0" izz="0.0139062"/>
+    </inertial>
+  </link>
+
+  <joint name="right_plate_joint" type="revolute">
+    <axis xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="right_plate_link"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.1135 0.0"/>
+    <limit effort="0" lower="-0.1" upper="0.1" velocity="0.1"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <link name="right_wheel_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/right_wheel_vis.stl"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="0.0 0.02815 0.0"/>
+    </visual>
+    <collision>
+      <origin rpy="0 1.57079632679 -1.57079632679" xyz="0.0 -0.005 0.0"/>
+      <geometry>
+        <cylinder length="0.0663" radius="0.0814"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.35"/>
+      <origin rpy="0 1.57079632679 -1.57079632679" xyz="0.0 -0.005 0.0"/>
+      <inertia ixx="0.00475357" ixy="0.0" ixz="0.0" iyy="0.00475357" iyz="0.0" izz="0.0077855"/>
+    </inertial>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <axis xyz="0 1 0"/>
+    <parent link="right_plate_link"/>
+    <child link="right_wheel_link"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.14365 0.0"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <link name="left_plate_link">
+    <visual>
+      <origin rpy="0 0 -1.57079632679" xyz="0 -0.1105 0"/>
+      <geometry>
+        <mesh filename="../meshes/left_plate_vis.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.221 0.186 0.08"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.00920683" ixy="0.0" ixz="0.0" iyy="0.00683267" iyz="0.0" izz="0.0139062"/>
+    </inertial>
+  </link>
+
+  <joint name="left_plate_joint" type="revolute">
+    <axis xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="left_plate_link"/>
+    <origin rpy="0 0 0" xyz="0.0 0.1135 0.0"/>
+    <limit effort="0" lower="-0.1" upper="0.1" velocity="0.1"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <link name="left_wheel_link">
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/left_wheel_vis.stl"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="0.0 -0.02815 0.0"/>
+    </visual>
+    <collision>
+      <origin rpy="0 1.57079632679 -1.57079632679" xyz="0.0 0.005 0.0"/>
+      <geometry>
+        <cylinder length="0.0663" radius="0.0814"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.35"/>
+      <origin rpy="0 1.57079632679 -1.57079632679" xyz="0.0 0.005 0.0"/>
+      <inertia ixx="0.00475357" ixy="0.0" ixz="0.0" iyy="0.00475357" iyz="0.0" izz="0.0077855"/>
+    </inertial>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <axis xyz="0 1 0"/>
+    <parent link="left_plate_link"/>
+    <child link="left_wheel_link"/>
+    <origin rpy="0 0 0" xyz="0.0 0.14365 0.0"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <link name="left_rod_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.8" radius="0.025"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.8" radius="0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.000534895833333" ixy="0.0" ixz="0.0" iyy="0.000534895833333" iyz="0.0" izz="3.125e-06"/>
+    </inertial>
+    <self_collide>0</self_collide>
+  </link>
+  <joint name="left_base_to_rod" type="revolute">
+    <parent link="left_plate_link"/>
+    <child link="left_rod_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.4"/>
+    <limit effort="100" lower="0.0" upper="0.0" velocity="10"/>
+  </joint>
+  <link name="left_weight_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.1"/>
+      </geometry>
+    </collision>
+    <self_collide>0</self_collide>
+    <inertial>
+      <mass value="35"/>
+      <inertia ixx="0.14" ixy="0.0" ixz="0.0" iyy="0.14" iyz="0.0" izz="0.14"/>
+    </inertial>
+  </link>
+  <joint name="left_rod_to_weight" type="revolute">
+    <parent link="left_rod_link"/>
+    <child link="left_weight_link"/>
+    <origin rpy="0 0 0" xyz=".0 0 0.4"/>
+    <limit effort="100" lower="0.0" upper="0.0" velocity="10"/>
+  </joint>
+  <link name="right_rod_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.8" radius="0.025"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.8" radius="0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.000534895833333" ixy="0.0" ixz="0.0" iyy="0.000534895833333" iyz="0.0" izz="3.125e-06"/>
+    </inertial>
+    <self_collide>0</self_collide>
+  </link>
+  <joint name="right_base_to_rod" type="revolute">
+    <parent link="right_plate_link"/>
+    <child link="right_rod_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.4"/>
+    <limit effort="100" lower="0.0" upper="0.0" velocity="10"/>
+  </joint>
+  <link name="right_weight_link">
+    <visual>
+      <geometry>
+        <sphere radius="0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.1"/>
+      </geometry>
+    </collision>
+    <self_collide>0</self_collide>
+    <inertial>
+      <mass value="35"/>
+      <inertia ixx="0.14" ixy="0.0" ixz="0.0" iyy="0.14" iyz="0.0" izz="0.14"/>
+    </inertial>
+  </link>
+  <joint name="right_rod_to_weight" type="revolute">
+    <parent link="right_rod_link"/>
+    <child link="right_weight_link"/>
+    <origin rpy="0 0 0" xyz=".0 0 0.4"/>
+    <limit effort="100" lower="0.0" upper="0.0" velocity="10"/>
+  </joint>
+
+</robot>

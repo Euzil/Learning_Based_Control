@@ -1,0 +1,4 @@
+# Use a Python 3.10 venv with --system-site-packages for ROS 2 Humble.
+aiortc>=1.14,<2
+aiohttp>=3.10,<4
+numpy>=1.21,<2

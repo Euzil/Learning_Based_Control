@@ -1,0 +1,3 @@
+function(ics_use_strict_warnings)    
+    set(CMAKE_CXX_FLAGS "-Wextra -Werror=address -Werror=array-bounds -Werror=c++0x-compat -Werror=char-subscripts -Werror=enum-compare -Werror=implicit-int -Werror=implicit-function-declaration -Werror=comment -Werror=conversion-null -Werror=div-by-zero -Werror=format -Werror=format-security -Werror=format-extra-args -Werror=init-self -Werror=int-to-pointer-cast -Werror=missing-braces -Werror=nonnull -Werror=parentheses -Werror=pointer-arith -Werror=pointer-sign -Werror=return-type -Werror=sequence-point -Werror=strict-overflow=1 -Werror=trigraphs -Werror=type-limits -Werror=volatile-register-var -fdiagnostics-show-option -Werror=overflow -Werror=uninitialized ${CMAKE_CXX_FLAGS}" PARENT_SCOPE)
+endfunction()

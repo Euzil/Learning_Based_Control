@@ -1,0 +1,24 @@
+.vscode
+.catkin_tools
+.catkin_workspace
+.editorconfig
+*.pyc
+experimental
+bags
+bag
+install
+build
+devel
+logs
+log
+core
+build_deploy
+devel_deploy
+install_deploy
+logs_deploy
+benchmark_qp
+src/CMakeLists.txt
+
+# Local simulation logs and preview output
+MUJOCO_LOG.TXT
+/work/preview.png

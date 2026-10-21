@@ -1,0 +1,99 @@
+scene: ../scenes/scene.xml
+robots:
+  - name: pm01
+    safty:
+      max_joint_delta: 3.0 # 2.0    # rad      
+      max_joint_vel: 100      # rad/s
+      max_imu_tilt: 0.6
+      max_obs_value: 1e3      
+    joints:
+      state_topic: /hardware/joint_state
+      command_topic: /hardware/joint_command
+      root_joint: root_joint
+      names:
+        - hip_pitch_l_joint
+        - hip_roll_l_joint
+        - hip_yaw_l_joint
+        - knee_pitch_l_joint
+        - ankle_pitch_l_joint
+        - ankle_roll_l_joint
+        - hip_pitch_r_joint
+        - hip_roll_r_joint
+        - hip_yaw_r_joint
+        - knee_pitch_r_joint
+        - ankle_pitch_r_joint
+        - ankle_roll_r_joint
+        - waist_yaw_joint
+        - shoulder_pitch_l_joint
+        - shoulder_roll_l_joint
+        - shoulder_yaw_l_joint
+        - elbow_pitch_l_joint
+        - elbow_yaw_l_joint
+        - shoulder_pitch_r_joint
+        - shoulder_roll_r_joint
+        - shoulder_yaw_r_joint
+        - elbow_pitch_r_joint
+        - elbow_yaw_r_joint
+        - head_yaw_joint
+      default_stiffness: [
+        70, 50, 50, 70, 20, 20,
+        70, 50, 50, 70, 20, 20,
+        200,
+        250, 250, 250, 250, 250,
+        250, 250, 250, 250, 250,
+        100
+      ]
+      default_damping: [
+        7.0, 5.0, 5.0, 7.0, 0.2, 0.2,
+        7.0, 5.0, 5.0, 7.0, 0.2, 0.2,
+        1,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        1
+      ]
+      default_position: [
+        -0.24, 0.0, 0.0, 0.48, -0.24, 0.0,
+        -0.24, 0.0, 0.0, 0.48, -0.24, 0.0,
+        0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0
+      ]
+    frames:
+      base: base_link
+      left_foot: foot_l_link
+      right_foot: foot_r_link
+    sensors:
+      imu_sensors:
+        - name: base_imu
+          topic: /hardware/imu_info
+      ft_sensors:
+        - name: left_ankle_ft
+          topic: left_ankle_ft          # -> /pm01/left_ankle_ft
+        - name: right_ankle_ft
+          topic: right_ankle_ft         # -> /pm01/right_ankle_ft
+      odom_sensors:
+        - name: odom
+          topic: odom                   # -> /pm01/odom
+      skin_sensors:
+        - name: p1e
+          topic: p1e                    # -> /pm01/p1e
+        - name: p2e
+          topic: p2e
+        - name: p3e
+          topic: p3e
+        - name: p4e
+          topic: p4e
+      ray_caster_sensors:
+        - name: base_height_scan
+          topic: base_height_scan       # -> /pm01/base_height_scan
+      # depth_camera_sensors:
+      #   - name: torso_camera
+      #     topic: torso_depth_camera   # -> /pm01/torso_depth_camera
+      #     width: 320
+      #     height: 240
+      rgb_camera_sensors:
+        - name: head_camera
+          topic: /simulation/head/image_raw
+          width: 1280
+          height: 720

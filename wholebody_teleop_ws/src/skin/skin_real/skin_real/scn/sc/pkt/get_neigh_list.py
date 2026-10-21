@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+
+from skin_real.scn.sc.pkt.tools import SC_ID_ALL,set_id
+
+
+def get_neigh_list( id : int = SC_ID_ALL) -> bytes:
+    pkt = bytearray([
+        0xC6,
+        0x00,0x00,
+        0x00, \
+        0x00,0x00,0x00,0x00, \
+        0x00,0x00,0x00,0x00, \
+        0x00,0x00,0x00,0x00, \
+        0x00,0x00,0x00,0xAA
+    ])
+    set_id(pkt,id)
+    return bytes(pkt)
+

@@ -1,0 +1,23 @@
+# Adaptive normalization (published on /normalized topic)
+#
+# Asymmetric peak-valley tracker.
+# lower bound snaps DOWN fast (tau_fast) on new minimum; drifts UP with tau_floor_up.
+# upper bound snaps UP fast (tau_fast) on new maximum; drifts DOWN with tau_ub_down.
+# Output = (val - lb) / max(range, min_range), clamped [0, 1].
+#
+# tau_fast:             must be << shortest air/contact phase. For 2 Hz gait (~150 ms swing), use ~0.05 s.
+# tau_lb_up:            how fast the floor recovers upward if noise pulled it too low.
+#                       Short enough to recover in seconds, long enough to ignore contact pulses.
+# tau_ub_down:          how slowly the ub forgets past contact peaks.
+#                       Keep long so it remembers peaks across extended air phases.
+# min_range:            minimum denominator in RAW sensor units.
+#                       Prevents noise amplification when lb ≈ ub (sensor in air a long time).
+#                       Tune to ~3-5x peak-to-peak in-air noise amplitude.
+norm_prox_tau_fast_sec: 0.05
+norm_prox_tau_lb_up_sec: 10.0
+norm_prox_tau_ub_down_sec: 10.0
+norm_prox_min_range: 0.01          # noise amplitude
+
+# Binary thresholds (on normalized [0,1] values, published on /binary topic)
+binary_prox_thres: 0.4            # normalized prox above this -> True
+binary_force_thres: 0.5           # normalized force above this -> True

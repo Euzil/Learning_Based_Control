@@ -1,0 +1,83 @@
+stages:
+  - test
+  - build
+  - deb
+
+image: ubuntu:focal
+
+# NOTE: You need to define the following environment variables in GitLab:
+#
+# GL_CICD_INIT_URI:         URL to git repository GitLabCICDInit (https)
+# GL_CICD_TOOLS_URI:        URL to git repository GitLabCICDTools
+# GL_CICD_SSH_PRIVATE_KEY:  private ssh key to clone the GitLabCICDTools
+
+default:
+  tags:
+    - burgos
+    
+before_script:
+  - export DEBIAN_FRONTEND=noninteractive
+  - > 
+    apt-get update && apt-get install -y
+    cmake 
+    curl 
+    iputils-ping
+    git
+    tree
+
+  # print all commands (debug)
+  #- set -x
+
+  # clone the cicd tools
+  - git clone $GL_CICD_INIT_URI GitLabCICDInit
+  - source GitLabCICDInit/build_setup.sh
+  - fbc_build_setup
+
+
+#env-test:
+#  stage: test
+#  script:
+#    - export
+#    - git --version
+#    - ls -las GitLabCICDTools
+     
+
+build-project:
+  stage: build
+  script:
+    - fbc_cmake_build --prefix usr
+    - tree install
+
+  artifacts:
+    paths:
+    - install
+    
+    
+build-package:
+  stage: deb
+  script:
+    - apt-get update && apt-get install -y ruby ruby-dev rubygems build-essential
+    - gem install fpm
+    - ls -las
+    - fbc_deb_build --config deb/config.sh
+    - ls -las
+
+  artifacts:
+    paths:
+    - tum-ics-cmake-tools*.deb
+     
+#ping-test:
+#  stage: test
+#  script: 
+#    - ping -c 3 google.de
+#    - echo $TEST_VAR
+#    - sleep 30
+#      
+#  variables:
+#    TEST_VAR: "Test variable!"
+#    
+#ping-test-internal:
+#  stage: test
+#  script: 
+#    - ping -c 3 192.168.10.1
+#    - sleep 30    

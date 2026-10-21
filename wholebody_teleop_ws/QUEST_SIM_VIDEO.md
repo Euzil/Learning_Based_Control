@@ -18,7 +18,7 @@
 在容器终端运行：
 
 ```bash
-bash /workspaces/wholebody_teleop_ws/scripts/run_quest_sim_video.sh
+bash /workspaces/Learning_Based_Control/wholebody_teleop_ws/scripts/run_quest_sim_video.sh
 ```
 
 脚本同时启动：
@@ -57,7 +57,7 @@ Quest 与电脑需要网络互通。`adb reverse` 只转发 TCP，不能自动�
 无需启动 Unity 或追踪监听脚本。在容器终端运行：
 
 ```bash
-bash /workspaces/wholebody_teleop_ws/scripts/run_quest_sim_video.sh
+bash /workspaces/Learning_Based_Control/wholebody_teleop_ws/scripts/run_quest_sim_video.sh
 ```
 
 在电脑浏览器打开 **http://127.0.0.1:8765/preview**。页面自动接收机器人头部视频，显示连接状态和帧率；“重新连接”按钮可重新建立连接。保持容器终端和模拟器窗口运行，Ctrl+C 停止。若已有旧版本视频服务运行，先停止并重新启动以加载新增页面。
@@ -73,7 +73,7 @@ bash /workspaces/wholebody_teleop_ws/scripts/run_quest_sim_video.sh
 ```bash
 source /opt/ros/humble/setup.bash
 /home/devel/quest-video-venv/bin/python \
-  /workspaces/wholebody_teleop_ws/scripts/check_quest_video.py
+  /workspaces/Learning_Based_Control/wholebody_teleop_ws/scripts/check_quest_video.py
 ```
 
 测试会协商真实 WebRTC 连接并接收 30 帧，检查画面不是空白、时间戳递增。
@@ -89,10 +89,10 @@ sudo apt-get update
 sudo apt-get install -y python3.10-venv
 python3 -m venv --system-site-packages /home/devel/quest-video-venv
 /home/devel/quest-video-venv/bin/pip install \
-  -r /workspaces/wholebody_teleop_ws/scripts/requirements-quest-video.txt
+  -r /workspaces/Learning_Based_Control/wholebody_teleop_ws/scripts/requirements-quest-video.txt
 source /opt/ros/humble/setup.bash
-source /workspaces/wholebody_teleop_ws/install/setup.bash
-cd /workspaces/wholebody_teleop_ws
+source /workspaces/Learning_Based_Control/wholebody_teleop_ws/install/setup.bash
+cd /workspaces/Learning_Based_Control/wholebody_teleop_ws
 colcon build --packages-select mujoco_simulation pm01_description --symlink-install
 ```
 
@@ -108,7 +108,7 @@ colcon build --packages-select mujoco_simulation pm01_description --symlink-inst
 source /opt/ros/humble/setup.bash
 export ROS_DOMAIN_ID=87 ROS_LOCALHOST_ONLY=1
 /home/devel/quest-video-venv/bin/python \
-  /workspaces/wholebody_teleop_ws/scripts/quest_video_server.py
+  /workspaces/Learning_Based_Control/wholebody_teleop_ws/scripts/quest_video_server.py
 ```
 
 另外启动原有仿真与控制器，并确保 ROS 域一致。`--topic` 可切换 ROS RGB 图像来源；当前默认话题特意使用 `/simulation/` 前缀。此服务本身不控制机器人。
@@ -131,3 +131,14 @@ Unity 6000.0.65f1 已编译更新后的脚本；`RobotVideoValidation.Run` 输�
 编辑器测试完成后退出时发生 `tcache_thread_shutdown(): unaligned tcache chunk detected` 原生内存错误，进程退出码 134；因此不能将整次 Unity 运行记为正常退出。没有验证 Quest 真机透视切换、独立 APK 或真实网络断线恢复。缺失的 Meta SDK/Visual Scripting 包缓存已经重新下载，旧缓存和旧 Bee 编译缓存保留在 HTS 项目的 `work/package-cache-backup`。
 
 视频自动连接需先按原流程启动 Streaming。若追踪通过 USB/localhost，记得为视频单独设置 Video Host。Docker 启动脚本现在默认不启动测试姿态监听端口。
+
+
+## 视频依赖快速恢复
+
+容器重建后若提示 `Video dependencies missing`，在容器的项目目录运行：
+
+```bash
+bash scripts/setup_quest_video.sh
+```
+
+该脚本安装 Python venv 支持、创建独立视频环境并验证 ROS/WebRTC 依赖；完成后重新执行 `bash scripts/run_quest_sim_video.sh`。

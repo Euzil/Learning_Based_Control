@@ -31,6 +31,14 @@ ET.ElementTree(ik_root).write(out / 'ik.xml')
 config['ik_scene'] = str(out / 'ik.xml')
 config['scene'] = str(out / 'scene.xml')
 joints = config['robots'][0]['joints']
+# Lower upper-body stiffness and add damping for smooth pose following.
+for i, name in enumerate(joints['names']):
+    if name.startswith(('shoulder_', 'elbow_')):
+        joints['default_stiffness'][i] = 60.0
+        joints['default_damping'][i] = 6.0
+    elif name == 'head_yaw_joint':
+        joints['default_stiffness'][i] = 15.0
+        joints['default_damping'][i] = 1.5
 joints['command_topic'] = '/simulation/quest/joint_command'
 joints['state_topic'] = '/simulation/quest/joint_state'
 (out / 'config.yaml').write_text(yaml.safe_dump(config))

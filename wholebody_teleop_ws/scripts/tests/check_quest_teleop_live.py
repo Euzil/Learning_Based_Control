@@ -10,7 +10,7 @@ import numpy as np
 import rclpy
 from interface_protocol.msg import JointState, JointCommand
 from rclpy.qos import QoSProfile, ReliabilityPolicy
-from test_quest_retarget import sample
+from test_quest_retarget import sample, yaw_quat
 
 workspace = Path(__file__).resolve().parents[2]
 os.environ['ROS_DOMAIN_ID'] = '87'
@@ -42,19 +42,30 @@ try:
     p = sample()
     p[11,:3] = [-.2,1.4,.3]
     p[19,:3] = [-.2,1.4,.55]
+    p[7,3:] = yaw_quat(p[7,3:], -.4)
     run(5,p)
     after = np.array(state[-1])
     change = np.linalg.norm(after[13:17]-before[13:17])
     assert change > .5, change
+    head = 23
+    assert abs(after[head]-.4) < .05, ('head tracking error', after[head])
+    state.clear()
+    run(1,p)
+    head_span = np.ptp(np.array(state)[:,head])
+    assert head_span < .05, ('head oscillation', head_span)
     run(1)
     held = np.array(commands[-1])
     run(.5)
     np.testing.assert_equal(commands[-1], held)
     assert np.isfinite(after).all()
-    print('PASS: actual simulated left arm moved', change, 'rad; stale command held; states',len(state))
+    print('PASS: actual simulated left arm moved', change, 'rad; head yaw', after[head], 'rad; settled head span',head_span,'rad; stale command held')
 finally:
     os.killpg(proc.pid, signal.SIGTERM)
-    proc.wait(timeout=10)
+    try:
+        proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, signal.SIGKILL)
+        proc.wait()
     sock.close()
     node.destroy_node()
     rclpy.shutdown()

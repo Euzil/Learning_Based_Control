@@ -13,7 +13,7 @@ import yaml
 
 class Retargeter:
     def __init__(self, config, hand_height_bias=.15):
-        if not math.isfinite(hand_height_bias) or not -.5 <= hand_height_bias <= .5:
+        if not math.isfinite(hand_height_bias) or not -.5 <= hand_height_bias <= 1:
             raise ValueError("hand_height_bias must be finite and between -0.5 and 0.5")
         self.hand_height_bias = hand_height_bias
         path = Path(config)
@@ -176,7 +176,7 @@ def main():
     parser.add_argument('--hand-height-bias', type=float, default=.15,
                         help='Torso-up forearm direction bias [-0.5, 0.5]; default 0.15, 0 disables')
     args = parser.parse_args()
-    if not math.isfinite(args.hand_height_bias) or not -.5 <= args.hand_height_bias <= .5:
+    if not math.isfinite(args.hand_height_bias) or not -.5 <= args.hand_height_bias <= 1:
         parser.error('--hand-height-bias must be between -0.5 and 0.5')
     import rclpy
     from interface_protocol.msg import JointCommand

@@ -246,6 +246,12 @@ class StreamReceiver:
     """Background receiver for UDP/TCP hand data."""
 
     def __init__(self, protocol: str, host: str, port: int) -> None:
+        import os
+        forward_port = os.environ.get("HTS_SIM_FORWARD_PORT")
+        self._forward_target = ("127.0.0.1", int(forward_port)) if forward_port else None
+        self._forward_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) if forward_port else None
+        if self._forward_socket is not None:
+            self._forward_socket.setblocking(False)
         self.protocol = protocol
         self.host = host
         self.port = port
@@ -276,6 +282,11 @@ class StreamReceiver:
                 thread.join(timeout=0.5)
 
     def _handle_line(self, line: str) -> None:
+        if self._forward_socket is not None and line.strip().lower().startswith("body joints_pose:"):
+            try:
+                self._forward_socket.sendto(line.encode("utf-8"), self._forward_target)
+            except OSError:
+                pass  # A slow/offline simulator must not interrupt live capture.
         parsed = _parse_line(line)
         if not parsed:
             return

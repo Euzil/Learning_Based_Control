@@ -10,7 +10,7 @@
 - 图像已经做 OpenGL 到 ROS 的上下翻转处理，时间戳为仿真时间。frame_id 为 `head_camera_optical_frame`，此阶段尚未发布相应 TF/CameraInfo。
 - 使用现有 Quest WebSocket 信令协议，端口 8765。服务器的 SDP answer 内含 ICE candidates。
 - Unity 在后台自动连接视频服务，收到已解码的视频帧后切换到头部跟随的单目大画面，隐藏透视层；视频停止或约 3 秒无新帧后恢复原视野。后台约每 3 秒重试，首次视频等待上限 15 秒。
-- 此阶段不是双目立体 VR，也尚未把 VR 头部姿态映射到机器人头部关节。
+- 这是单目视频。`run_quest_teleop.sh` 已接入头部 yaw，并在临时仿真模型中增加 pitch 来跟随抬头低头；普通 `run_quest_sim_video.sh` 不启动姿态控制。
 - 当前场景主要是地面和天空，头部向前看时画面比较空，这是正常的。
 
 ## 已有容器中启动

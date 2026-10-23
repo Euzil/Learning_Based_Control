@@ -13,10 +13,11 @@ import yaml
 from quest_body_profile import BodyProfile
 from quest_tracking import body_features
 from quest_calibration import CalibrationSession
+from quest_orientation import WristOrientation, DEFAULT_WRIST_OFFSETS_DEG
 
 
 class Retargeter:
-    def __init__(self, config, hand_height_bias=None, body_profile=None):
+    def __init__(self, config, hand_height_bias=None, body_profile=None, wrist_offsets_deg=DEFAULT_WRIST_OFFSETS_DEG):
         self.profile = BodyProfile.load(body_profile) if body_profile is not None else None
         if hand_height_bias is None:
             hand_height_bias = 0. if self.profile else .15
@@ -51,6 +52,10 @@ class Retargeter:
                 raise ValueError('Robot shoulder/elbow/hand reference points must be separated by >= 0.05 m')
             self.arms.append((human, indices, bodies, upper_len, lower_len))
         self.head = self.joints['names'].index('head_yaw_joint')
+        self.head_pitch = (self.joints['names'].index('sim_head_pitch_joint')
+                           if 'sim_head_pitch_joint' in self.joints['names'] else None)
+        self.filtered_pitch = None
+        self.wrists = WristOrientation(self.model, self.joints['names'], self.ids, self.dadr, wrist_offsets_deg)
         self.rest = self.q.copy()
         self.filtered_directions = None
         self.filtered_head = None
@@ -91,6 +96,8 @@ class Retargeter:
             else:
                 self.filtered_positions += alpha*(positions-self.filtered_positions)
         previous = self.q.copy()
+        # Set original wrist rotation first so arm IK accounts for the moving endpoint.
+        self.wrists.solve(poses, basis, self.q, self.qadr, self.data, alpha)
         for arm_index, (_, indices, bodies, upper_len, lower_len) in enumerate(self.arms):
             dofs = self.dadr[indices]
             for _ in range(12):
@@ -152,6 +159,14 @@ class Retargeter:
             else:
                 gaze = np.array([2*(x*z+w*y), 2*(y*z-w*x), 1-2*(x*x+y*y)])
             lateral, frontal = np.dot(gaze, left), np.dot(gaze, forward)
+            if self.head_pitch is not None:
+                pitch = -math.atan2(np.dot(gaze, up), math.hypot(lateral, frontal))
+                low, high = self.model.jnt_range[self.ids[self.head_pitch]]
+                pitch = np.clip(pitch, low, high)
+                if self.filtered_pitch is None:
+                    self.filtered_pitch = previous[self.head_pitch]
+                self.filtered_pitch += alpha*(pitch-self.filtered_pitch)
+                self.q[self.head_pitch] = self.filtered_pitch
             # Looking almost vertically has no well-defined yaw: hold it.
             if math.hypot(lateral, frontal) > .25:
                 yaw = math.atan2(lateral, frontal)
@@ -224,6 +239,9 @@ def main():
                         help='Validate configuration and print model lengths without starting ROS')
     parser.add_argument('--hand-height-bias', type=float, default=None,
                         help='Torso-up direction bias [-0.5, 0.5]; default 0 with profile, otherwise 0.15')
+    parser.add_argument('--wrist-offset-deg', nargs=2, type=float, default=DEFAULT_WRIST_OFFSETS_DEG,
+                        metavar=('LEFT', 'RIGHT'),
+                        help='Original wrist joint zero corrections in degrees, left then right; default 90 -90; +/-150')
     args = parser.parse_args()
     if args.overwrite_calibration and not args.calibrate:
         parser.error('--overwrite-calibration requires --calibrate')
@@ -231,7 +249,7 @@ def main():
         parser.error('Calibration requires --hand-height-bias 0 (or omit it)')
     try:
         solver = Retargeter(args.config, hand_height_bias=0. if args.calibrate else args.hand_height_bias,
-                            body_profile=args.body_profile)
+                            body_profile=args.body_profile, wrist_offsets_deg=args.wrist_offset_deg)
         calibration = (CalibrationSession(solver, args.calibrate, args.overwrite_calibration)
                        if args.calibrate else None)
     except (ValueError, OSError, yaml.YAMLError) as exc:
@@ -253,6 +271,10 @@ def main():
         logging.warning('Fixed standing-height reference active; preserve the Quest tracking origin. '
                         'Recalibrate after recentering. Vertical shoulder gain %.3f',
                         solver.profile.calibration['vertical_scale'])
+    logging.warning('Wrist zero corrections (left/right): %.1f / %.1f degrees', *args.wrist_offset_deg)
+    if solver.head_pitch is not None:
+        logging.warning('Original elbow_yaw wrist rotation active; head pitch and palm flexion are simulation extensions. '
+                        'Keep wrists straight on the first tracking frame (orientation zero).')
     if args.check_profile:
         return
     import rclpy

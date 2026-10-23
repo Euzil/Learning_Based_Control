@@ -222,6 +222,8 @@ class CalibrationSession:
                 logging.warning('标定配置已保存，但报告写入失败：%s', exc)
             solver.profile = BodyProfile.load(self.output)
             solver.hand_height_bias = 0.
+            solver.filtered_pitch = None
+            solver.wrists.reset()
             solver.filtered_directions = solver.filtered_positions = solver.filtered_head = None
             self.done = True
             logging.warning('标定完成，已保存 %s；拟合误差（仅记录，不筛选）cm（左/右 肘/手）：%s。开始真人跟随。',

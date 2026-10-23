@@ -10,10 +10,17 @@ import mujoco
 import numpy as np
 import yaml
 
+from quest_body_profile import BodyProfile
+from quest_tracking import body_features
+from quest_calibration import CalibrationSession
+
 
 class Retargeter:
-    def __init__(self, config, hand_height_bias=.15):
-        if not math.isfinite(hand_height_bias) or not -.5 <= hand_height_bias <= 1:
+    def __init__(self, config, hand_height_bias=None, body_profile=None):
+        self.profile = BodyProfile.load(body_profile) if body_profile is not None else None
+        if hand_height_bias is None:
+            hand_height_bias = 0. if self.profile else .15
+        if not math.isfinite(hand_height_bias) or not -.5 <= hand_height_bias <= 0.5:
             raise ValueError("hand_height_bias must be finite and between -0.5 and 0.5")
         self.hand_height_bias = hand_height_bias
         path = Path(config)
@@ -28,47 +35,48 @@ class Retargeter:
         self.data.qpos[self.qadr] = self.q
         mujoco.mj_forward(self.model, self.data)
         self.arms = []
+        self.hand_local = []
         for side, human in [('l', (10, 11, 19)), ('r', (15, 16, 45))]:
             indices = [self.joints['names'].index(f'{joint}_{side}_joint') for joint in
                        ('shoulder_pitch', 'shoulder_roll', 'shoulder_yaw', 'elbow_pitch')]
             bodies = [self.model.body(f'{joint}_{side}_link').id for joint in
                       ('shoulder_roll', 'elbow_pitch', 'elbow_yaw')]
+            local = (self.profile.arms[len(self.arms)].robot_hand_local_m.copy()
+                     if self.profile else np.array([.03, 0., -.14]))
+            self.hand_local.append(local)
             shoulder, elbow, wrist = self.data.xpos[bodies].copy()
-            self.arms.append((human, indices, bodies, np.linalg.norm(elbow-shoulder),
-                              np.linalg.norm(wrist-elbow)))
+            wrist += self.data.xmat[bodies[2]].reshape(3, 3) @ local
+            upper_len, lower_len = np.linalg.norm(elbow-shoulder), np.linalg.norm(wrist-elbow)
+            if min(upper_len, lower_len) < .05:
+                raise ValueError('Robot shoulder/elbow/hand reference points must be separated by >= 0.05 m')
+            self.arms.append((human, indices, bodies, upper_len, lower_len))
         self.head = self.joints['names'].index('head_yaw_joint')
         self.rest = self.q.copy()
         self.filtered_directions = None
         self.filtered_head = None
+        self.filtered_positions = None
+        self.position_errors_m = None
 
     def solve(self, poses, dt, head_pose=None):
-        if poses.shape != (70, 7) or not np.isfinite(poses).all():
-            raise ValueError('Expected 70 finite joint poses')
-        p = poses[:, :3]
-        left = p[10] - p[15]
-        up = p[5] - p[1]
-        if min(np.linalg.norm(left), np.linalg.norm(up)) < .05:
-            raise ValueError('Degenerate torso tracking')
-        up /= np.linalg.norm(up)
-        left -= up * np.dot(left, up)
-        if np.linalg.norm(left) < .05:
-            raise ValueError('Degenerate shoulder tracking')
-        left /= np.linalg.norm(left)
-        forward = np.cross(up, left)  # Unity is left handed.
-        basis = np.array([forward, left, up])
-        directions = []
-        for human, indices, bodies, upper_len, lower_len in self.arms:
-            shoulder, elbow, wrist = p[list(human)]
-            upper, lower = elbow-shoulder, wrist-elbow
-            if min(np.linalg.norm(upper), np.linalg.norm(lower)) < .05:
-                raise ValueError('Degenerate arm tracking')
-            upper_direction = basis @ upper / np.linalg.norm(upper)
-            lower_direction = basis @ lower / np.linalg.norm(lower)
+        if not math.isfinite(dt) or dt < 0:
+            raise ValueError('dt must be finite and nonnegative')
+        absolute_z = self.profile is not None and self.profile.calibration is not None
+        basis, segments, shoulder_heights, _ = body_features(poses, gravity_aligned=absolute_z)
+        forward, left, up = basis
+        directions, positions = [], []
+        for arm_index, (human, indices, bodies, upper_len, lower_len) in enumerate(self.arms):
+            upper, lower = segments[arm_index]
+            upper_direction = upper / np.linalg.norm(upper)
+            lower_direction = lower / np.linalg.norm(lower)
             # Dimensionless lift in torso space, after human arm normalization.
             # This preserves segment length and leaves vertical arms vertical.
             lower_direction[2] += self.hand_height_bias
             lower_direction /= np.linalg.norm(lower_direction)
             directions.extend([upper_direction, lower_direction])
+            if self.profile:
+                positions.append(self.profile.targets(
+                    arm_index, upper, lower_direction*np.linalg.norm(lower),
+                    (upper_len, lower_len), shoulder_heights[arm_index]))
         # Filter target directions in torso coordinates, not raw world positions.
         alpha = 1. - math.exp(-min(max(dt, 0.), .05) / .08)
         directions = np.array(directions)
@@ -76,32 +84,53 @@ class Retargeter:
             self.filtered_directions = directions.copy()
         else:
             self.filtered_directions += alpha * (directions-self.filtered_directions)
+        if self.profile:
+            positions = np.asarray(positions)
+            if self.filtered_positions is None:
+                self.filtered_positions = positions.copy()
+            else:
+                self.filtered_positions += alpha*(positions-self.filtered_positions)
         previous = self.q.copy()
-        for arm_index, (_, indices, bodies, _, _) in enumerate(self.arms):
+        for arm_index, (_, indices, bodies, upper_len, lower_len) in enumerate(self.arms):
             dofs = self.dadr[indices]
             for _ in range(12):
                 mujoco.mj_forward(self.model, self.data)
-                # Use segment directions. The shoulder roll pivot moves with
+                # The shoulder roll pivot moves with
                 # shoulder pitch; subtract its Jacobian rather than pinning it.
                 # The forearm endpoint is beyond the elbow-yaw pivot.
                 points = [self.data.xpos[bodies[0]], self.data.xpos[bodies[1]],
                           self.data.xpos[bodies[2]] +
-                          self.data.xmat[bodies[2]].reshape(3, 3) @ np.array([.03, 0., -.14])]
+                          self.data.xmat[bodies[2]].reshape(3, 3) @ self.hand_local[arm_index]]
                 jacs = []
                 for body, point in zip(bodies, points):
                     jac = np.zeros((3, self.model.nv))
                     mujoco.mj_jac(self.model, self.data, jac, None, point, body)
                     jacs.append(jac[:, dofs])
                 errors, jacobians = [], []
-                for k in range(2):
-                    segment = points[k+1]-points[k]
-                    length = np.linalg.norm(segment)
-                    direction = segment/length
-                    target = self.filtered_directions[2*arm_index+k]
-                    target = target/max(np.linalg.norm(target), 1e-6)
-                    errors.extend(target-direction)
-                    jacobians.append((np.eye(3)-np.outer(direction,direction)) @
-                                     (jacs[k+1]-jacs[k])/length)
+                if self.profile:
+                    # Shoulder-relative position IK. Normalize residuals by a
+                    # fixed robot reach, never by the current target magnitude.
+                    reach = upper_len + lower_len
+                    for k, weight in enumerate((self.profile.elbow_weight,
+                                                self.profile.hand_weight)):
+                        scale = math.sqrt(weight)/reach
+                        current = points[k+1]-points[0]
+                        relative_jac = jacs[k+1]-jacs[0]
+                        if absolute_z:
+                            current[2] = points[k+1][2]
+                            relative_jac[2] = jacs[k+1][2]
+                        errors.extend(scale*(self.filtered_positions[arm_index, k]-current))
+                        jacobians.append(scale*relative_jac)
+                else:
+                    for k in range(2):
+                        segment = points[k+1]-points[k]
+                        length = np.linalg.norm(segment)
+                        direction = segment/length
+                        target = self.filtered_directions[2*arm_index+k]
+                        target = target/max(np.linalg.norm(target), 1e-6)
+                        errors.extend(target-direction)
+                        jacobians.append((np.eye(3)-np.outer(direction,direction)) @
+                                         (jacs[k+1]-jacs[k])/length)
                 jac = np.vstack(jacobians)
                 # A small rest-pose preference removes twist ambiguity when
                 # the arm is straight; the previous pose keeps IK continuous.
@@ -139,6 +168,17 @@ class Retargeter:
         self.q = previous + np.clip(self.q-previous, -step, step)
         self.data.qpos[self.qadr] = self.q
         mujoco.mj_forward(self.model, self.data)
+        if self.profile:
+            self.position_errors_m = []
+            for i, (_, _, bodies, _, _) in enumerate(self.arms):
+                shoulder, elbow, hand = self.data.xpos[bodies].copy()
+                hand += self.data.xmat[bodies[2]].reshape(3, 3) @ self.hand_local[i]
+                current = np.array([elbow-shoulder, hand-shoulder])
+                if absolute_z:
+                    current[:, 2] = [elbow[2], hand[2]]
+                self.position_errors_m.append(np.linalg.norm(
+                    self.filtered_positions[i]-current, axis=1))
+            self.position_errors_m = np.asarray(self.position_errors_m)
         return self.q.copy()
 
 
@@ -170,31 +210,81 @@ def parse_head(line):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     parser.add_argument('--config', required=True)
     parser.add_argument('--port', type=int, default=9010, help='Forwarded UDP pose port')
-    parser.add_argument('--hand-height-bias', type=float, default=.15,
-                        help='Torso-up forearm direction bias [-0.5, 0.5]; default 0.15, 0 disables')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--body-profile', help='Personal calibration YAML; enables position IK')
+    mode.add_argument('--calibrate', metavar='OUTPUT_YAML',
+                      help='Robot-led four-pose calibration, then start tracking with saved profile')
+    parser.add_argument('--overwrite-calibration', action='store_true',
+                        help='Explicitly replace an existing calibration output')
+    parser.add_argument('--tracking-ready-file', help=argparse.SUPPRESS)
+    parser.add_argument('--check-profile', action='store_true',
+                        help='Validate configuration and print model lengths without starting ROS')
+    parser.add_argument('--hand-height-bias', type=float, default=None,
+                        help='Torso-up direction bias [-0.5, 0.5]; default 0 with profile, otherwise 0.15')
     args = parser.parse_args()
-    if not math.isfinite(args.hand_height_bias) or not -.5 <= args.hand_height_bias <= 1:
-        parser.error('--hand-height-bias must be between -0.5 and 0.5')
+    if args.overwrite_calibration and not args.calibrate:
+        parser.error('--overwrite-calibration requires --calibrate')
+    if args.calibrate and args.hand_height_bias not in (None, 0.):
+        parser.error('Calibration requires --hand-height-bias 0 (or omit it)')
+    try:
+        solver = Retargeter(args.config, hand_height_bias=0. if args.calibrate else args.hand_height_bias,
+                            body_profile=args.body_profile)
+        calibration = (CalibrationSession(solver, args.calibrate, args.overwrite_calibration)
+                       if args.calibrate else None)
+    except (ValueError, OSError, yaml.YAMLError) as exc:
+        parser.error(str(exc))
+    logging.warning('Arm mapping: %s; hand height bias %.3f',
+                    'robot-led calibration' if calibration else (
+                        'personal position calibration' if solver.profile else 'segment directions'),
+                    solver.hand_height_bias)
+    for i, (_, _, _, upper, lower) in enumerate(solver.arms):
+        logging.warning('%s robot upper %.4f m, forearm to configured endpoint %.4f m',
+                        ('Left', 'Right')[i], upper, lower)
+        if solver.profile:
+            arm = solver.profile.arms[i]
+            logging.warning('Human upper %.4f m, forearm %.4f m; effective scales %.3f / %.3f',
+                            arm.upper_arm_m, arm.forearm_m,
+                            upper/arm.upper_arm_m*arm.upper_gain,
+                            lower/arm.forearm_m*arm.forearm_gain)
+    if solver.profile and solver.profile.calibration is not None:
+        logging.warning('Fixed standing-height reference active; preserve the Quest tracking origin. '
+                        'Recalibrate after recentering. Vertical shoulder gain %.3f',
+                        solver.profile.calibration['vertical_scale'])
+    if args.check_profile:
+        return
     import rclpy
-    from interface_protocol.msg import JointCommand
+    from interface_protocol.msg import JointCommand, JointState
     from rclpy.qos import QoSProfile, ReliabilityPolicy
     rclpy.init()
     node = rclpy.create_node('quest_sim_retarget')
-    solver = Retargeter(args.config, hand_height_bias=args.hand_height_bias)
     topic = solver.joints['command_topic']
-    if not topic.startswith('/simulation/'):
+    if not topic.startswith('/simulation/') or not solver.joints['state_topic'].startswith('/simulation/'):
         raise ValueError('This bridge requires an isolated /simulation/ command topic')
     pub = node.create_publisher(JointCommand, topic,
         QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+    feedback, feedback_time = None, -math.inf
+    def on_state(msg):
+        nonlocal feedback, feedback_time
+        q = np.asarray(msg.position, dtype=float)
+        if q.shape == solver.q.shape and np.isfinite(q).all():
+            feedback, feedback_time = q, time.monotonic()
+    if calibration:
+        node.create_subscription(JointState, solver.joints['state_topic'], on_state,
+            QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+        logging.warning('机器人引导标定：请在 MuJoCo 全身观察窗口查看示范。'
+                        '共 4 个采样姿态，采样后直接使用，不做姿态匹配或误差验收。'
+                        '期间不跟随真人；追踪或反馈中断会暂停。')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('127.0.0.1', args.port))
     sock.setblocking(False)
     last_valid = None
     previous_solve = time.monotonic()
+    previous_control = previous_solve
     stale = True
+    last_error_log = -math.inf
     head_pose, head_time = None, -math.inf
     logging.warning('Waiting for forwarded Body joints_pose on 127.0.0.1:%d', args.port)
     try:
@@ -214,10 +304,22 @@ def main():
                     pose = parse_pose(line)
                     if pose is not None:
                         latest = pose
-            if latest is not None:
+            calibrating = calibration is not None and not calibration.done
+            if calibrating:
+                calibration.step(start, start-previous_control, latest, feedback, feedback_time)
+                if calibration.done and args.tracking_ready_file:
+                    Path(args.tracking_ready_file).write_text('tracking ready\n')
+                previous_solve = start
+            previous_control = start
+            if latest is not None and not calibrating:
                 try:
                     solver.solve(latest, start-previous_solve,
                                  head_pose if start-head_time < .15 else None)
+                    if solver.profile and start-last_error_log >= 5.:
+                        logging.warning('Commanded-pose IK residual cm (elbow, hand): left %s; right %s',
+                                        np.round(100*solver.position_errors_m[0], 1),
+                                        np.round(100*solver.position_errors_m[1], 1))
+                        last_error_log = start
                     previous_solve = start
                     last_valid = start
                     if stale:

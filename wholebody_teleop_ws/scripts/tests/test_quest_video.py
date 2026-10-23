@@ -1,5 +1,12 @@
 """Run with the video venv after sourcing ROS: python -m unittest discover -s scripts/tests."""
 import sys
+import json
+import os
+import socket
+import subprocess
+import tempfile
+import time
+from urllib.request import urlopen
 from pathlib import Path
 import unittest
 from types import SimpleNamespace
@@ -27,3 +34,48 @@ class ImageConversionTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     image_array(SimpleNamespace(encoding=encoding, width=1, height=1,
                                                 step=step, data=data))
+
+
+class CalibrationVideoTests(unittest.TestCase):
+    def test_no_listener_until_calibration_ready(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ready = Path(directory)/'tracking-ready'
+            with socket.socket() as sock:
+                sock.bind(('127.0.0.1', 0))
+                port = sock.getsockname()[1]
+            env = dict(os.environ, ROS_DOMAIN_ID='194', ROS_LOCALHOST_ONLY='1')
+            log_path = Path(directory)/'video.log'
+            with log_path.open('w') as log:
+                process = subprocess.Popen([
+                    sys.executable, str(Path(__file__).resolve().parents[1]/'quest_video_server.py'),
+                    '--host', '127.0.0.1', '--port', str(port), '--wait-for-tracking', str(ready)],
+                    stdout=log, stderr=log, env=env)
+                try:
+                    deadline = time.monotonic()+10
+                    while 'robot video paused' not in log_path.read_text():
+                        self.assertIsNone(process.poll(), log_path.read_text())
+                        if time.monotonic() > deadline:
+                            self.fail(log_path.read_text())
+                        time.sleep(.05)
+                    with self.assertRaises(OSError):
+                        socket.create_connection(('127.0.0.1', port), timeout=.2)
+                    ready.write_text('tracking ready\n')
+                    deadline = time.monotonic()+10
+                    while True:
+                        self.assertIsNone(process.poll(), log_path.read_text())
+                        try:
+                            with urlopen(f'http://127.0.0.1:{port}/health', timeout=.2) as response:
+                                health = json.load(response)
+                            self.assertFalse(health['source_ready'])
+                            break
+                        except OSError:
+                            if time.monotonic() > deadline:
+                                self.fail(log_path.read_text())
+                            time.sleep(.05)
+                finally:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait()

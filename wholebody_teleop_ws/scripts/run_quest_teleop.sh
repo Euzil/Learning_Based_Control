@@ -31,10 +31,22 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT TERM
 "$video_python" "$workspace/scripts/prepare_quest_teleop.py" "$runtime_dir"
+# Fail on invalid personal calibration before starting simulation/video processes.
+"$video_python" "$workspace/scripts/quest_retarget.py" --config "$runtime_dir/config.yaml" "$@" --check-profile
+bridge_args=()
+video_args=()
+for arg in "$@"; do
+    if [[ "$arg" == "--check-profile" ]]; then exit 0; fi
+    if [[ "$arg" == "--calibrate" || "$arg" == --calibrate=* ]]; then
+        # Per-launch marker, never the output profile (which may already exist).
+        bridge_args=(--tracking-ready-file "$runtime_dir/tracking-ready")
+        video_args=(--wait-for-tracking "$runtime_dir/tracking-ready")
+    fi
+done
 "$workspace/install/mujoco_simulation/lib/mujoco_simulation/mujoco_simulator" "$runtime_dir/config.yaml" &
 pids+=("$!")
-"$video_python" "$workspace/scripts/quest_retarget.py" --config "$runtime_dir/config.yaml" "$@" &
+"$video_python" "$workspace/scripts/quest_retarget.py" --config "$runtime_dir/config.yaml" "$@" "${bridge_args[@]}" &
 pids+=("$!")
-"$video_python" "$workspace/scripts/quest_video_server.py" &
+"$video_python" "$workspace/scripts/quest_video_server.py" "${video_args[@]}" &
 pids+=("$!")
 wait -n "${pids[@]}"

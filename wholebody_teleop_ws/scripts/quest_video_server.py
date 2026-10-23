@@ -229,8 +229,23 @@ class VideoServer:
         await asyncio.gather(*(ws.close() for ws in list(self.sockets)))
 
 
+def wait_for_tracking(path):
+    """Delay signaling/media until this launch's calibration has succeeded.
+
+    The launcher owns this process and terminates it if calibration exits.
+    No listener is opened while waiting, so existing Quest clients keep their
+    original view and can reconnect normally once tracking starts.
+    """
+    if path is not None:
+        LOG.info("Calibration in progress: robot video paused; keeping original Quest view.")
+        while not Path(path).is_file():
+            time.sleep(.2)
+        LOG.info("Calibration collected: starting robot video.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--wait-for-tracking", help="Start video only after this readiness file exists")
     parser.add_argument("--topic", default="/simulation/head/image_raw")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8765)
@@ -241,6 +256,7 @@ def main():
     if not 1 <= args.fps <= 60:
         parser.error("--fps must be between 1 and 60")
     logging.basicConfig(level=logging.INFO)
+    wait_for_tracking(args.wait_for_tracking)
     rclpy.init(args=[])
     source = ImageSource(args.topic)
     executor = rclpy.executors.SingleThreadedExecutor()

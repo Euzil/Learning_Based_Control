@@ -1,0 +1,23 @@
+# EXAMPLE ONLY: replace with your measured lengths in metres before use.
+# Upper arm: shoulder joint centre -> elbow; forearm: elbow -> wrist.
+# Gains change target positions, not the robot's physical link lengths.
+left:
+  upper_arm_m: 0.30
+  forearm_m: 0.25
+  upper_gain: 1.0
+  forearm_gain: 1.0
+  # Robot torso axes: forward, left, up (metres). Applied to hand only.
+  hand_offset_m: [0.0, 0.0, 0.0]
+  # Approximate hand endpoint in elbow_yaw_l_link local axes, NOT torso axes.
+  # Replace with a verified endpoint if available; default matches legacy code.
+  robot_hand_local_m: [0.03, 0.0, -0.14]
+right:
+  upper_arm_m: 0.30
+  forearm_m: 0.25
+  upper_gain: 1.0
+  forearm_gain: 1.0
+  hand_offset_m: [0.0, 0.0, 0.0]
+  robot_hand_local_m: [0.03, 0.0, -0.14]
+# Squared position error weights. Hand priority can trade off elbow alignment.
+elbow_weight: 0.5
+hand_weight: 1.0

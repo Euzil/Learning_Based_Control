@@ -150,3 +150,22 @@ Set up TCP server before starting streaming from the HTS app. Minimal example pr
 1. Have you enabled "Allow USB connection" on your Meta Quest?
    - Verify with `adb devices`. You should see your headset listed.
 2. Make sure your firewall allows inbound traffic on the UDP/TCP port you are using.
+
+
+## 无可视化接收并转发到机器人
+
+在宿主机 `hand-tracking-streamer` 目录执行（先停止占用 TCP 8000 的其他接收程序）：
+
+```bash
+HTS_SIM_FORWARD_PORT=9010 python scripts/sockets.py --protocol tcp --host 0.0.0.0 --port 8000 --tally
+```
+
+无需 ROS、Matplotlib 或 RViz。`--tally` 只打印消息数量，不打印整帧姿态；转发照常进行。
+也可用 `--forward-port 9010` 替代环境变量；命令行优先，`--forward-port 0` 禁用转发。
+未指定转发端口时保留原来的纯接收行为。
+
+TCP 数据按换行重组，处理拆包和粘包，只将完整的 `Body joints_pose`、`Head pose`
+原样转发到本机 UDP。断开时丢弃未完成的最后一行，重新连接可继续接收。
+机器人端继续运行 `bash scripts/run_quest_teleop.sh --wbc`（或 Walk/Run）。
+数据流为 Quest → TCP 8000 → sockets.py → UDP 9010 → quest_retarget.py
+→ 上肢参考 → quest_policy.py → MuJoCo；本次不改变策略逻辑。

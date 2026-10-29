@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import select
 import signal
 import socket
@@ -20,7 +21,26 @@ import threading
 import time
 
 
-def run_udp_listener(host: str, port: int, tally: bool) -> None:
+class PoseForwarder:
+    """Forward complete body/head lines without parsing or changing their values."""
+    def __init__(self, port):
+        self.target = ('127.0.0.1', port)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setblocking(False)
+
+    def send(self, line):
+        label = line.split(b':', 1)[0].split(b'|', 1)[0].strip().lower()
+        if label in (b'body joints_pose', b'head pose'):
+            try:
+                self.sock.sendto(line, self.target)
+            except OSError:
+                pass  # Offline/slow simulation must not block Quest reception.
+
+    def close(self):
+        self.sock.close()
+
+
+def run_udp_listener(host: str, port: int, tally: bool, forwarder=None) -> None:
     """Listen for UDP packets and log or tally them."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -53,6 +73,9 @@ def run_udp_listener(host: str, port: int, tally: bool) -> None:
                 except BlockingIOError:
                     continue
 
+                if forwarder is not None:
+                    for line in data.splitlines():
+                        forwarder.send(line)
                 if tally:
                     msgs_this_second += 1
                 else:
@@ -65,10 +88,11 @@ def run_udp_listener(host: str, port: int, tally: bool) -> None:
                         logging.info("Message from %s: %s", addr, data)
 
             now = time.monotonic()
-            if now >= next_report and tally:
-                logging.info("messages/sec: %d", msgs_this_second)
+            if now >= next_report:
+                if tally:
+                    logging.info("packets/sec: %d", msgs_this_second)
                 msgs_this_second = 0
-                next_report += 1.0
+                next_report = now + 1.0
     finally:
         try:
             sock.close()
@@ -76,49 +100,50 @@ def run_udp_listener(host: str, port: int, tally: bool) -> None:
             pass
 
 
-def handle_tcp_connection(conn, addr, tally: bool) -> None:
-    """Handle a single TCP connection in a separate thread."""
+def handle_tcp_connection(conn, addr, tally: bool, forwarder=None) -> None:
+    """Reassemble newline-delimited records across TCP packet boundaries."""
     with conn:
         logging.info("Accepted connection from %s", addr)
-
-        msgs_this_second = 0
-        next_report = time.monotonic() + 1.0
-
+        buffer = b''
+        count = 0
+        next_report = time.monotonic()+1.
+        conn.settimeout(1.)
         try:
             while True:
-                data = conn.recv(4096)
-                if not data:
-                    if tally and msgs_this_second:
-                        logging.info(
-                            "messages/sec (final interval) from %s: %d",
-                            addr,
-                            msgs_this_second,
-                        )
+                try:
+                    data = conn.recv(65536)
+                except socket.timeout:
+                    data = None
+                if data == b'':
                     logging.info("Connection from %s closed", addr)
-                    break
+                    break  # Discard an incomplete final record.
+                if data:
+                    buffer += data
+                    while b'\n' in buffer:
+                        line, buffer = buffer.split(b'\n', 1)
+                        line = line.rstrip(b'\r')
+                        if not line:
+                            continue
+                        count += 1
+                        if forwarder is not None:
+                            forwarder.send(line)
+                        if not tally:
+                            logging.info("Message from %s: %s", addr,
+                                         line.decode('utf-8', errors='replace'))
+                    if len(buffer) > 1024*1024:
+                        logging.warning("Closing oversized incomplete record from %s", addr)
+                        break
+                now = time.monotonic()
+                if now >= next_report:
+                    if tally:
+                        logging.info("messages/sec from %s: %d", addr, count)
+                    count = 0
+                    next_report = now+1.
+        except OSError as exc:
+            logging.warning("Connection from %s ended: %s", addr, exc)
 
-                if tally:
-                    msgs_this_second += 1
-                else:
-                    try:
-                        message = data.decode("utf-8")
-                        for line in message.split("\n"):
-                            if line:
-                                logging.info("Message from %s: %s", addr, line)
-                    except UnicodeDecodeError:
-                        logging.info("Message from %s: %s", addr, data)
 
-                if tally:
-                    now = time.monotonic()
-                    if now >= next_report:
-                        logging.info("messages/sec from %s: %d", addr, msgs_this_second)
-                        msgs_this_second = 0
-                        next_report += 1.0
-        except Exception as e:
-            logging.error("Error handling connection from %s: %s", addr, e)
-
-
-def run_tcp_server(host: str, port: int, tally: bool) -> None:
+def run_tcp_server(host: str, port: int, tally: bool, forwarder=None) -> None:
     """Listen for TCP connections from HTS and handle each in a separate thread."""
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -135,7 +160,7 @@ def run_tcp_server(host: str, port: int, tally: bool) -> None:
             # Handle each connection in a separate thread
             thread = threading.Thread(
                 target=handle_tcp_connection,
-                args=(conn, addr, tally),
+                args=(conn, addr, tally, forwarder),
                 daemon=True
             )
             thread.start()
@@ -183,7 +208,16 @@ def main() -> None:
         action="store_true",
         help="Only count messages per second instead of printing each message.",
     )
+    parser.add_argument('--forward-port', type=int, default=None,
+                        help='Forward body/head poses to localhost UDP; defaults to HTS_SIM_FORWARD_PORT.')
     args = parser.parse_args()
+    try:
+        forward_port = (args.forward_port if args.forward_port is not None else
+                        int(os.environ.get('HTS_SIM_FORWARD_PORT', '0')))
+    except ValueError:
+        parser.error('HTS_SIM_FORWARD_PORT must be an integer')
+    if not 0 <= forward_port <= 65535:
+        parser.error('Forward port must be 1-65535, or 0 to disable')
 
     host = args.host or _default_host(args.protocol)
     port = args.port or _default_port(args.protocol)
@@ -193,10 +227,21 @@ def main() -> None:
         format="%(asctime)s %(levelname)s %(message)s",
     )
 
-    if args.protocol == "udp":
-        run_udp_listener(host, port, args.tally)
-    else:
-        run_tcp_server(host, port, args.tally)
+    if args.protocol == 'udp' and forward_port == port:
+        parser.error('UDP receiving and forwarding ports must differ')
+    forwarder = PoseForwarder(forward_port) if forward_port else None
+    if forwarder:
+        logging.info('Forwarding Body joints_pose and Head pose to UDP 127.0.0.1:%d', forward_port)
+    try:
+        if args.protocol == "udp":
+            run_udp_listener(host, port, args.tally, forwarder)
+        else:
+            run_tcp_server(host, port, args.tally, forwarder)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if forwarder:
+            forwarder.close()
 
 
 if __name__ == "__main__":

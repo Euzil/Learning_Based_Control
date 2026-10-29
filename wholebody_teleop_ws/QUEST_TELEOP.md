@@ -49,7 +49,7 @@ bash scripts/run_quest_teleop.sh --wbc --body-profile configs/quest_calibrated.y
 宿主机 `(hts)` 环境仍从 `hand-tracking-streamer` 目录运行原数据转发：
 
 ```bash
-HTS_SIM_FORWARD_PORT=9010 python scripts/visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
+HTS_SIM_FORWARD_PORT=9010 python scripts/sockets.py --protocol tcp --host 0.0.0.0 --port 8000 --tally
 ```
 
 停止旧仿真后启动以上命令，Quest 连接地址和视频流程保持原样。不需要单独运行测试文件，也不需要重编译 ROS。
@@ -93,7 +93,7 @@ WBC 接收 Quest 上肢参考并控制全身关节；不添加弯腰、降高或
 
 ## 固定基座模式
 
-沿用 TCP 8000 的 `visualizer.py` 接收与显示，额外通过本机 UDP 9010 转发完整 `Body joints_pose`。控制器按 PM01 模型做双臂肘部/腕部位置 IK，并将头部朝向映射到 head_yaw。只消费最新帧，60 Hz 控制，关节限位和 1.5 rad/s 速度限制；300 ms 无有效姿态后保持最后关节目标。恢复追踪仍经过速度限制。
+使用 TCP 8000 的 `sockets.py` 无可视化接收，通过本机 UDP 9010 转发完整 `Body joints_pose` 和 `Head pose`。控制器按 PM01 模型做双臂肘部/腕部位置 IK，并将头部朝向映射到 head_yaw。只消费最新帧，60 Hz 控制，关节限位和 1.5 rad/s 速度限制；300 ms 无有效姿态后保持最后关节目标。恢复追踪仍经过速度限制。
 
 这是固定底座的上半身遥操作：底座通过仿真 weld 约束固定，腿保持默认弯曲姿态。没有行走、全身平衡或手指跟随。原始 PM01 只有头部 yaw、没有独立腕关节；当前控制原有 `elbow_yaw` 末端旋转关节，并在仿真中增加头部 pitch 和手掌屈伸（详见文末）。手臂方向以当前人体躯干为参考，按机器人臂长缩放；腰部保持默认位置。必须启用 Quest 上半身追踪并持续发送 70 个关节的 `Body joints_pose`。仅有手或控制器数据不会驱动此桥接器。
 
@@ -102,7 +102,7 @@ WBC 接收 Quest 上肢参考并控制全身关节；不添加弯腰、降高或
 1. 在宿主机 `(hts)` 环境，把原可视化程序停止后用以下命令重启（只增加环境变量）：
 
 ```bash
-HTS_SIM_FORWARD_PORT=9010 python scripts/visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
+HTS_SIM_FORWARD_PORT=9010 python scripts/sockets.py --protocol tcp --host 0.0.0.0 --port 8000 --tally
 ```
 
 Quest 原有 TCP 地址/端口保持不变。如果 TCP 断开后未自动恢复，在 Quest 上重新开始 Streaming。`record_visualize_body_stream.py` 也继承相同转发功能。未设置环境变量时完全沿用原接收行为。

@@ -26,6 +26,7 @@ class Retargeter:
         self.hand_height_bias = hand_height_bias
         path = Path(config)
         cfg = yaml.safe_load(path.read_text())
+        self.reference_topic = cfg.get('quest_reference_topic')
         self.joints = cfg['robots'][0]['joints']
         self.model = mujoco.MjModel.from_xml_path(str((path.parent / cfg['ik_scene']).resolve()))
         self.data = mujoco.MjData(self.model)
@@ -250,6 +251,8 @@ def main():
     try:
         solver = Retargeter(args.config, hand_height_bias=0. if args.calibrate else args.hand_height_bias,
                             body_profile=args.body_profile, wrist_offsets_deg=args.wrist_offset_deg)
+        if solver.reference_topic and args.calibrate:
+            raise ValueError('Run robot-led calibration in fixed-base mode, then use --body-profile in policy mode')
         calibration = (CalibrationSession(solver, args.calibrate, args.overwrite_calibration)
                        if args.calibrate else None)
     except (ValueError, OSError, yaml.YAMLError) as exc:
@@ -279,14 +282,22 @@ def main():
         return
     import rclpy
     from interface_protocol.msg import JointCommand, JointState
+    from sensor_msgs.msg import JointState as NamedJointState
     from rclpy.qos import QoSProfile, ReliabilityPolicy
     rclpy.init()
     node = rclpy.create_node('quest_sim_retarget')
-    topic = solver.joints['command_topic']
+    reference_only = solver.reference_topic is not None
+    topic = solver.reference_topic if reference_only else solver.joints['command_topic']
     if not topic.startswith('/simulation/') or not solver.joints['state_topic'].startswith('/simulation/'):
         raise ValueError('This bridge requires an isolated /simulation/ command topic')
-    pub = node.create_publisher(JointCommand, topic,
+    pub = node.create_publisher(NamedJointState if reference_only else JointCommand, topic,
         QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+    if reference_only:
+        # Keep this module independent of ONNX Runtime in fixed-base mode.
+        upper_names = [n for n in solver.joints['names'] if n.startswith(
+            ('shoulder_', 'elbow_', 'head_', 'sim_head_', 'sim_wrist_'))]
+        upper_ids = [solver.joints['names'].index(n) for n in upper_names]
+        logging.warning('Policy mode: publishing named upper-body references only to %s', topic)
     feedback, feedback_time = None, -math.inf
     def on_state(msg):
         nonlocal feedback, feedback_time
@@ -296,6 +307,7 @@ def main():
     if calibration:
         node.create_subscription(JointState, solver.joints['state_topic'], on_state,
             QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+    if calibration:
         logging.warning('机器人引导标定：请在 MuJoCo 全身观察窗口查看示范。'
                         '共 4 个采样姿态，采样后直接使用，不做姿态匹配或误差验收。'
                         '期间不跟随真人；追踪或反馈中断会暂停。')
@@ -313,6 +325,7 @@ def main():
         while rclpy.ok():
             start = time.monotonic()
             latest = None
+            solved = False
             # Bound draining so incoming traffic cannot starve control.
             for _ in range(256):
                 try:
@@ -344,6 +357,7 @@ def main():
                         last_error_log = start
                     previous_solve = start
                     last_valid = start
+                    solved = True
                     if stale:
                         logging.warning('Tracking active: arms and head following')
                     stale = False
@@ -352,6 +366,18 @@ def main():
             if last_valid is not None and start-last_valid > .3 and not stale:
                 logging.warning('Tracking stale: holding last commanded pose')
                 stale = True
+            if reference_only:
+                # Only fresh, successfully solved tracking produces a reference.
+                # Re-publishing held values would conceal a Quest disconnect.
+                if solved:
+                    msg = NamedJointState()
+                    msg.header.stamp = node.get_clock().now().to_msg()
+                    msg.name = upper_names
+                    msg.position = solver.q[upper_ids].tolist()
+                    pub.publish(msg)
+                rclpy.spin_once(node, timeout_sec=0.)
+                time.sleep(max(0., 1/60-(time.monotonic()-start)))
+                continue
             msg = JointCommand()
             msg.header.stamp = node.get_clock().now().to_msg()
             msg.position = solver.q.tolist()

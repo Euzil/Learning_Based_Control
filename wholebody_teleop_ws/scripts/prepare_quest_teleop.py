@@ -1,12 +1,20 @@
-"""Create a fixed-base scene/config without changing the normal simulator."""
+"""Create an isolated Quest scene; optionally enable floating-base policy control."""
 from pathlib import Path
-import sys
+import argparse
 import copy
 import xml.etree.ElementTree as ET
 import yaml
 
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('output')
+models = parser.add_mutually_exclusive_group()
+for mode in ('walk', 'run', 'wbc'):
+    models.add_argument(f'--{mode}-model', help=f'{mode.upper()} ONNX: floating base and Quest references')
+args = parser.parse_args()
+mode = next((m for m in ('walk', 'run', 'wbc') if getattr(args, m+'_model')), None)
+model_path = getattr(args, mode+'_model') if mode else None
 workspace = Path(__file__).resolve().parents[1]
-out = Path(sys.argv[1]).resolve()
+out = Path(args.output).resolve()
 out.mkdir(parents=True, exist_ok=True)
 source = workspace / 'src/robots/pm01_description/configs/pm01.yaml'
 config = yaml.safe_load(source.read_text())
@@ -60,8 +68,9 @@ for side, thumb_sign in (('l', 1), ('r', -1)):
                       pos=pos, size=size, rgba=rgba, contype='0', conaffinity='0', group='1')
 config['simulated_wrist_flexion_extension'] = True
 
-equality = ET.SubElement(root.getroot(), 'equality')
-ET.SubElement(equality, 'weld', name='teleop_fixed_base', body1='base_link')
+if not model_path:
+    equality = ET.SubElement(root.getroot(), 'equality')
+    ET.SubElement(equality, 'weld', name='teleop_fixed_base', body1='base_link')
 root.write(out / 'scene.xml')
 ik_root = copy.deepcopy(root.getroot())
 for tag in ('sensor', 'extension'):
@@ -81,4 +90,16 @@ for i, name in enumerate(joints['names']):
         joints['default_damping'][i] = 1.5
 joints['command_topic'] = '/simulation/quest/joint_command'
 joints['state_topic'] = '/simulation/quest/joint_state'
+if model_path:
+    from quest_policy import QuestPolicy
+    policy = QuestPolicy(joints, Path(model_path).resolve(), mode)
+    joints['default_position'] = policy.robot_default.tolist()
+    joints['default_stiffness'] = policy.kp.tolist()
+    joints['default_damping'] = policy.kd.tolist()
+    config['quest_reference_topic'] = '/simulation/quest/upper_reference'
+    config['policy_mode'] = mode
+    config['policy_model'] = str(Path(model_path).resolve())
+    if mode == 'wbc':
+        config['wbc_model'] = config['policy_model']
+    config['robots'][0]['sensors']['imu_sensors'][0]['topic'] = '/simulation/quest/imu'
 (out / 'config.yaml').write_text(yaml.safe_dump(config))

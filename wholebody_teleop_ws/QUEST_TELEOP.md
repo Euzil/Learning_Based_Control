@@ -1,4 +1,97 @@
-# Quest 实时双臂与转头跟随
+# Quest 遥操作与策略选择
+
+## 统一入口：保留固定基座、Walk、Run、WBC
+
+在容器的 `wholebody_teleop_ws` 目录选择一个模式：
+
+```bash
+bash scripts/run_quest_teleop.sh          # 固定基座，原有 Quest 跟随
+bash scripts/run_quest_teleop.sh --walk   # Walk + Quest 上肢角度覆盖
+bash scripts/run_quest_teleop.sh --run    # Run + Quest 上肢角度覆盖
+bash scripts/run_quest_teleop.sh --wbc    # WBC + Quest 参考输入
+```
+
+选择具体模型版本（当前统一接口支持 ONNX，不支持 JIT）：
+
+```bash
+bash scripts/run_quest_teleop.sh --walk --model models/pm01_amp_flat_walk/2026-09-27_22-30-26.onnx
+bash scripts/run_quest_teleop.sh --run-model models/pm01_amp_flat_run/2026-09-24_11-03-04.onnx
+bash scripts/run_quest_teleop.sh --wbc-model models/pm01_wbc/20260721_211647.onnx
+```
+
+`--walk-model`、`--run-model`、`--wbc-model` 都保留；它们等价于选择模式后使用 `--model`。
+一次启动只能选择一个模式，换模型时 Ctrl+C 停止后重新启动。所有模式都保留追踪、标定配置加载和摄像头视频。
+默认加载上述三个文件。模型关节顺序、历史长度、观测缩放、动作缩放和 PD 参数均读取各自元数据；
+不兼容的模型在启动仿真之前报错。本地 20 个 ONNX 的元数据和输入输出形状已检查。
+
+速度默认 `0 0 0`，可使用统一的 `--velocity VX VY YAW_RATE`，单位为 m/s、m/s、rad/s。
+原 `--walk-velocity` 仍可使用，也提供 `--run-velocity` 和 `--wbc-velocity`。
+`/simulation/quest/cmd_vel`（Twist）接口保留；首次使用后若 300 ms 无新消息则速度归零。
+没有新鲜 Quest 数据时也会将速度归零。Run 并不保证零速度站立，与 Walk 一样，硬覆盖上肢可能导致漂移或倾倒。
+WBC 会使用上肢参考参与推理，与 Walk/Run 的直接覆盖不同。
+使用 `bash scripts/run_quest_teleop.sh --help` 查看入口参数。没有新增专用启动或测试脚本。
+
+
+## 使用 WBC：沿用原有追踪、标定和视频
+
+在开发容器的 `wholebody_teleop_ws` 目录启动：
+
+```bash
+bash scripts/run_quest_teleop.sh --wbc
+```
+
+需要沿用已有个人标定时：
+
+```bash
+bash scripts/run_quest_teleop.sh --wbc --body-profile configs/quest_calibrated.yaml
+```
+
+宿主机 `(hts)` 环境仍从 `hand-tracking-streamer` 目录运行原数据转发：
+
+```bash
+HTS_SIM_FORWARD_PORT=9010 python scripts/visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
+```
+
+停止旧仿真后启动以上命令，Quest 连接地址和视频流程保持原样。不需要单独运行测试文件，也不需要重编译 ROS。
+缺少依赖时，在容器原 Python 环境运行：
+
+```bash
+/home/devel/quest-video-venv/bin/python -m pip install -r scripts/requirements-quest-teleop.txt
+```
+
+默认加载 `models/pm01_wbc/20260721_211647.onnx`。`--wbc-model PATH` 可选择其他兼容的 WBC ONNX。
+不指定策略模式仍是固定基座模式。之前新增的三个专用 Walk 测试文件保持移除；运行接口均保留。
+
+启动后的控制关系：
+
+1. 场景不添加基座 weld，双腿和腰部可自由运动；保留物理关节限位。
+2. WBC 以 50 Hz 运行，接收实际关节/IMU 反馈。默认平面速度、转向速度和 yaw/roll 指令为零，高度目标使用模型默认值，身体 pitch/roll/yaw 命令保持为零。
+3. 未收到 Quest 时使用模型默认上肢参考，由策略生成全身关节目标。
+4. 收到 Quest 后，双臂和头 yaw 的 11 个参考按模型训练范围限幅、限速，通过 `arm_delta` 进入策略的 872 维观测。
+5. 原始 24 关节执行 `默认角度 + 策略动作 × 缩放 + 上肢参考偏移`，保留策略对上肢的修正。
+   新增头 pitch 和双腕屈伸不在模型内，单独跟随；最终仅一个节点发布 27 关节命令。
+6. Quest 超过 300 ms 无有效新帧时保持最后上肢参考，WBC 继续控制；机器人反馈失流或倾角超过 0.9 rad 时转为被动阻尼，需重置仿真。
+
+日志 `Quest active: WBC references` 表示参考已接入。
+WBC 接收 Quest 上肢参考并控制全身关节；不添加弯腰、降高或全身 IK 逻辑。
+机器人引导标定仍在固定基座模式执行，随后用 `--body-profile` 加载。
+
+运行文件只需关注：
+
+| 文件 | 用途 |
+|---|---|
+| `scripts/run_quest_teleop.sh` | 统一启动入口 |
+| `scripts/prepare_quest_teleop.py` | 生成固定基座或 WBC 浮动基座场景 |
+| `scripts/quest_retarget.py` | 原有 Quest 重定向；WBC 模式只发布带名称的参考 |
+| `scripts/quest_policy.py` | Walk/Run/WBC 推理、各自的参考处理及唯一的全身命令发布 |
+| `scripts/quest_video_server.py` | 原有视频服务 |
+
+验证范围：872 维观测与原有部署实现对照一致；无界面 10 秒默认站立、小幅抬臂各完成一次，
+均未超过 0.9 rad 倾角或低于 0.45 m 基座高度，最大倾角约 0.151 rad，净位移约 0.12 m。
+这是 Python MuJoCo 3.3.7 的短时结果，不能保证任意动作或长期稳定；实际 Quest、C++ 窗口与视频联动仍需现场确认。
+若窗口报 `Authorization required` / `could not initialize GLFW`，需从有显示权限的开发容器终端启动。
+
+## 固定基座模式
 
 沿用 TCP 8000 的 `visualizer.py` 接收与显示，额外通过本机 UDP 9010 转发完整 `Body joints_pose`。控制器按 PM01 模型做双臂肘部/腕部位置 IK，并将头部朝向映射到 head_yaw。只消费最新帧，60 Hz 控制，关节限位和 1.5 rad/s 速度限制；300 ms 无有效姿态后保持最后关节目标。恢复追踪仍经过速度限制。
 

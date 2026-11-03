@@ -82,6 +82,7 @@ class WorldReferenceController:
         self.previous_height_offset = None
         self.previous_translation = np.zeros(2)
         self.previous_turn = 0.
+        self.goal_heading = 0.
         self.move = self.turn = False
         self.retired_sessions = set()
 
@@ -91,23 +92,26 @@ class WorldReferenceController:
             return False
         if session == self.session and sequence <= self.sequence:
             return False
-        # Unity right/up/forward -> robot forward/left/up, then initial heading alignment.
+        # Unity offset is encoded in the frozen initial operator heading.
+        # Decode travel there, then apply it along the ACTUAL robot heading.
         offset = np.array([values[2], -values[0]])
         new_session = session != self.session
         reconnect = now-self.received > .3
         if new_session or reconnect or self.goal is None:
             if new_session and self.session is not None:
                 self.retired_sessions.add(self.session)
-            self.alignment = yaw + values[4]
+            self.goal_heading = yaw
             self.goal = np.array([position[0], position[1], yaw], dtype=float)
             self.previous = np.r_[offset, -values[3]]
             self.move = self.turn = False
         delta = np.r_[offset, -values[3]]-self.previous
-        translation = rotation(self.alignment) @ delta[:2]
+        self._follow_heading(position, yaw)
+        local_translation = rotation(values[4]) @ delta[:2]
+        translation = rotation(yaw) @ local_translation
 
         moving, turning = values[5] > 1e-4, abs(values[6]) > 1e-4
         if moving and self.move:
-            if np.dot(translation, self.previous_translation) < -1e-10:
+            if np.dot(local_translation, self.previous_translation) < -1e-10:
                 self.goal[:2] = position[:2]
             self.goal[:2] += translation
         else:
@@ -121,7 +125,7 @@ class WorldReferenceController:
         self.previous = np.r_[offset, -values[3]]
         self.move, self.turn = moving, turning
         if np.linalg.norm(translation) > 1e-8:
-            self.previous_translation = translation
+            self.previous_translation = local_translation
         if abs(delta[2]) > 1e-8:
             self.previous_turn = delta[2]
         # Accumulate only achievable height changes: reversing at a limit responds immediately.
@@ -135,6 +139,14 @@ class WorldReferenceController:
         self.active = True
         return True
 
+    def _follow_heading(self, position, yaw):
+        if self.goal is not None:
+            # Preserve remaining forward travel as the robot turns; do not chase
+            # an old world-frame point or introduce sideways motion.
+            lead = rotation(-self.goal_heading) @ (self.goal[:2]-position[:2])
+            self.goal[:2] = position[:2] + rotation(yaw) @ np.array([lead[0], 0.])
+        self.goal_heading = yaw
+
     def command(self, position, yaw, now, enabled=True):
         if not enabled or now-self.received > .3:
             self.active = False
@@ -143,6 +155,7 @@ class WorldReferenceController:
             if self.goal is not None:
                 self.goal[:] = [position[0], position[1], yaw]
             return np.zeros(3), self.height
+        self._follow_heading(position, yaw)
         error = self.goal[:2]-position[:2]
         # Prevent accumulated unreachable goals from producing a long catch-up motion.
         length = np.linalg.norm(error)

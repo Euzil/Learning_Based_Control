@@ -67,6 +67,8 @@ public class ControllerPalmPoseStreamer : MonoBehaviour
             return;
         }
 
+        if (!OVRInput.GetControllerPositionTracked(OvrController)) return;
+
         if (!_isInitialized) InitializeNetwork();
 
         _timer += Time.deltaTime;
@@ -117,7 +119,9 @@ public class ControllerPalmPoseStreamer : MonoBehaviour
             LogHUD(_sbLog.ToString());
         }
 
-        SendData(_sbPacket.ToString());
+        string packet = _sbPacket.ToString();
+        if (_locomotionProvider != null) packet = _locomotionProvider.AnnotateTracking(packet);
+        SendData(packet);
     }
 
     private Pose ApplyLocomotion(Pose source)

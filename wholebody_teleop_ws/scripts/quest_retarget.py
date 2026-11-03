@@ -11,6 +11,7 @@ import numpy as np
 import yaml
 
 from quest_locomotion import parse_reference, remove_locomotion
+from quest_wholebody import HandTargetMapper, parse_controller
 from quest_body_profile import BodyProfile
 from quest_tracking import body_features
 from quest_calibration import CalibrationSession
@@ -28,6 +29,8 @@ class Retargeter:
         path = Path(config)
         cfg = yaml.safe_load(path.read_text())
         self.reference_topic = cfg.get('quest_reference_topic')
+        self.policy_mode = cfg.get('policy_mode')
+        self.default_body_height = cfg.get('whole_body_default_height', .8)
         self.joints = cfg['robots'][0]['joints']
         self.model = mujoco.MjModel.from_xml_path(str((path.parent / cfg['ik_scene']).resolve()))
         self.data = mujoco.MjData(self.model)
@@ -229,6 +232,7 @@ def parse_head(line):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     parser.add_argument('--config', required=True)
+    parser.add_argument('--upper-only', action='store_true', help='Disable controller-position whole-body planning')
     parser.add_argument('--port', type=int, default=9010, help='Forwarded UDP pose port')
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--body-profile', help='Personal calibration YAML; enables position IK')
@@ -289,7 +293,13 @@ def main():
     node = rclpy.create_node('quest_sim_retarget')
     from std_msgs.msg import String
     locomotion_pub = node.create_publisher(String, '/simulation/quest/locomotion_reference', 10)
+    from geometry_msgs.msg import PointStamped
     reference_only = solver.reference_topic is not None
+    hand_mapper = HandTargetMapper(solver) if solver.policy_mode == 'wbc' and not args.upper_only else None
+    hand_pubs = [node.create_publisher(PointStamped, f'/simulation/quest/{side}_hand_target', 10)
+                 for side in ('left', 'right')] if hand_mapper else []
+    hand_times = [-math.inf, -math.inf]
+    hand_session = None
     topic = solver.reference_topic if reference_only else solver.joints['command_topic']
     if not topic.startswith('/simulation/') or not solver.joints['state_topic'].startswith('/simulation/'):
         raise ValueError('This bridge requires an isolated /simulation/ command topic')
@@ -330,6 +340,7 @@ def main():
             start = time.monotonic()
             latest = None
             solved = False
+            controllers = [None, None]
             # Bound draining so incoming traffic cannot starve control.
             for _ in range(256):
                 try:
@@ -337,13 +348,21 @@ def main():
                 except BlockingIOError:
                     break
                 for line in packet.splitlines():
-                    if parse_reference(line) is not None:
+                    locomotion = parse_reference(line)
+                    if locomotion is not None:
+                        if hand_mapper and locomotion[0] != hand_session:
+                            hand_mapper.reset()
+                            hand_session = locomotion[0]
+                            hand_times[:] = [-math.inf, -math.inf]
                         if reference_only:
                             locomotion_pub.publish(String(data=line))
                         elif not warned_fixed_locomotion:
                             logging.warning('Controller locomotion requires --wbc (or --walk/--run); '
                                             'fixed-base mode cannot turn or move the robot base.')
                             warned_fixed_locomotion = True
+                    controller = parse_controller(line) if hand_mapper else None
+                    if controller is not None:
+                        controllers[controller[0]] = controller[1]
                     head = parse_head(line)
                     if head is not None:
                         head_pose, head_time = head, start
@@ -366,6 +385,8 @@ def main():
                                         np.round(100*solver.position_errors_m[0], 1),
                                         np.round(100*solver.position_errors_m[1], 1))
                         last_error_log = start
+                    if hand_mapper:
+                        hand_mapper.initialize(latest)
                     previous_solve = start
                     last_valid = start
                     solved = True
@@ -377,6 +398,18 @@ def main():
             if last_valid is not None and start-last_valid > .3 and not stale:
                 logging.warning('Tracking stale: holding last commanded pose')
                 stale = True
+            if hand_mapper and last_valid is not None and start-last_valid <= .3:
+                for side, position in enumerate(controllers):
+                    if position is None:
+                        continue
+                    target = hand_mapper.map(side, position, start-hand_times[side])
+                    if target is not None:
+                        msg = PointStamped()
+                        msg.header.stamp = node.get_clock().now().to_msg()
+                        msg.header.frame_id = 'quest_robot_heading'
+                        msg.point.x, msg.point.y, msg.point.z = map(float, target)
+                        hand_pubs[side].publish(msg)
+                        hand_times[side] = start
             if reference_only:
                 # Only fresh, successfully solved tracking produces a reference.
                 # Re-publishing held values would conceal a Quest disconnect.

@@ -173,7 +173,16 @@ class QuestPolicy:
         return np.concatenate([b.ravel() for b in self.buffers]).astype(np.float32)
 
     def step(self, position, velocity, quaternion_xyzw, angular_velocity, command,
-             reference=None, height=None):
+             reference=None, height=None, body_tilt=None):
+        if body_tilt is not None:
+            if not self.is_wbc:
+                raise ValueError('Body posture references require WBC')
+            roll, pitch = vector(body_tilt, 2, 'body roll/pitch reference')
+            desired = np.array([np.clip(pitch, *self.meta['range_pitch']),
+                                np.clip(roll, *self.meta['range_roll'])])
+            # WBC loco order: vx, vy, yaw_rate, height, yaw, pitch, roll.
+            self.loco_command[5:7] += np.clip(desired-self.loco_command[5:7],
+                                             -.5*self.dt, .5*self.dt)
         if height is not None:
             if not self.is_wbc or not np.isfinite(height):
                 raise ValueError("Height commands require WBC and a finite value")
@@ -220,6 +229,8 @@ def main():
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', required=True)
+    parser.add_argument('--upper-only', action='store_true')
+    parser.add_argument('--body-profile')
     parser.add_argument('--velocity', type=float, nargs=3, default=(0., 0., 0.))
     args = parser.parse_args()
     requested_velocity = vector(args.velocity, 3, 'requested velocity')
@@ -239,6 +250,14 @@ def main():
     if model.neq:
         parser.error('Policy scene must have no equality constraints')
     limits = model.jnt_range[[model.joint(n).id for n in policy.names]].copy()
+    planner = None
+    if policy.is_wbc and not args.upper_only:
+        from quest_wholebody import WholeBodyPlanner
+        hand_local = None
+        if args.body_profile:
+            from quest_body_profile import BodyProfile
+            hand_local = [a.robot_hand_local_m for a in BodyProfile.load(args.body_profile).arms]
+        planner = WholeBodyPlanner(model, policy, hand_local)
 
     import rclpy
     from rclpy.parameter import Parameter
@@ -247,7 +266,7 @@ def main():
     from sensor_msgs.msg import JointState as NamedJointState
     from rclpy.executors import ExternalShutdownException
     from rosgraph_msgs.msg import Clock
-    from geometry_msgs.msg import Twist, PoseStamped
+    from geometry_msgs.msg import Twist, PoseStamped, PointStamped
     from nav_msgs.msg import Odometry
     from std_msgs.msg import String
 
@@ -257,6 +276,7 @@ def main():
     qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
     pub = node.create_publisher(JointCommand, joints['command_topic'], qos)
     goal_pub = node.create_publisher(PoseStamped, '/simulation/quest/world_target', 10)
+    posture_pub = node.create_publisher(NamedJointState, '/simulation/quest/wholebody_reference', 10)
     world = WorldReferenceController(policy.meta.get('default_height', .8),
                                      policy.meta.get('range_height', [.8, .8]))
     odom_topic = robot['sensors']['odom_sensors'][0]['topic']
@@ -267,7 +287,9 @@ def main():
              'reference': None, 'reference_time': -np.inf,
              'clock': None, 'twist': None, 'twist_time': -np.inf,
              'fault': False, 'tracking': False, 'started': False,
-             'odom': None, 'odom_time': -np.inf, 'odom_frame': '', 'world_seen': False}
+             'odom': None, 'odom_time': -np.inf, 'odom_frame': '', 'world_seen': False,
+             'hands': [None, None], 'hand_times': [-np.inf, -np.inf],
+             'plan': None, 'plan_tick': 0, 'plan_log_time': -np.inf}
 
     def on_joints(msg):
         try:
@@ -318,18 +340,33 @@ def main():
         now = time.monotonic()
         if ref is None or state['odom'] is None or now-state['odom_time'] > .3:
             return
+        previous_session = world.session
         if world.accept(ref, *state['odom'], now):
+            if planner and previous_session is not None and previous_session != world.session:
+                planner.reset()
+                state.update(hands=[None,None], hand_times=[-np.inf,-np.inf], plan=None, plan_tick=0)
             if not state['world_seen']:
                 node.get_logger().info('Joystick world reference connected; release stops movement; height holds')
                 if not policy.is_wbc:
                     node.get_logger().warning('Walk/Run support planar motion only; crouch requires --wbc')
             state['world_seen'] = True
 
+    def on_hand(msg, side):
+        point = np.array([msg.point.x, msg.point.y, msg.point.z])
+        if msg.header.frame_id != 'quest_robot_heading' or not np.isfinite(point).all():
+            return
+        state['hands'][side] = point
+        state['hand_times'][side] = time.monotonic()
+
     def on_clock(msg):
         stamp = msg.clock.sec + msg.clock.nanosec*1e-9
         if state['clock'] is not None and stamp < state['clock']:
             policy.reset()
             world.reset()
+            if planner:
+                planner.reset()
+            state.update(hands=[None,None], hand_times=[-np.inf,-np.inf],
+                         plan=None, plan_tick=0)
             state.update(odom=None, odom_time=-np.inf, world_seen=False)
             state.update(q=None, quat=None, reference=None, reference_time=-np.inf,
                          fault=False, started=False, tracking=False, twist=None, twist_time=-np.inf)
@@ -396,8 +433,42 @@ def main():
         if not fresh:
             cmd = np.zeros(3)
         try:
+            reference = state['reference'] if fresh else None
+            body_tilt = None
+            odom_fresh = state['odom'] is not None and now-state['odom_time'] <= .3
+            hand_fresh = any(now-t <= .3 for t in state['hand_times'])
+            if (planner and fresh and odom_fresh and hand_fresh
+                    and all(h is not None for h in state['hands'])):
+                if state['plan_tick'] % 3 == 0:
+                    plan = planner.solve(state['hands'], state['q'], state['quat'],
+                                         state['odom'][0][2], reference,
+                                         policy.meta['default_height'] if height is None else height)
+                    state['plan'] = plan
+                    diagnostic = NamedJointState()
+                    diagnostic.header.stamp = node.get_clock().now().to_msg()
+                    diagnostic.name = ['base_height', 'base_roll', 'base_pitch'] + list(policy.upper_names)
+                    diagnostic.position = np.r_[plan['posture'],plan['upper']].tolist()
+                    posture_pub.publish(diagnostic)
+                    if now-state['plan_log_time'] >= 2.:
+                        node.get_logger().info('Whole-body hand reach: planned/actual errors cm ' +
+                            f"{np.round(100*plan['hand_error'],1).tolist()} / " +
+                            f"{np.round(100*plan['actual_hand_error'],1).tolist()}; " +
+                            f"height={plan['posture'][0]:.3f}, roll/pitch deg=" +
+                            f"{np.round(np.rad2deg(plan['posture'][1:]),1).tolist()}")
+                        state['plan_log_time'] = now
+                state['plan_tick'] += 1
+            if planner and state['plan'] is not None:
+                # Missing controller samples hold the previous target; no fabricated fresh samples.
+                reference = state['plan']['upper'].copy()
+                if fresh:
+                    for i, name in enumerate(policy.upper_names):
+                        if not name.startswith(('shoulder_', 'elbow_pitch_')):
+                            reference[i] = state['reference'][i]
+                height = (planner.height_command(state['plan']['posture'][0],state['odom'][0][2])
+                          if odom_fresh else policy.loco_command[3])
+                body_tilt = state['plan']['posture'][1:]
             target = policy.step(state['q'], state['dq'], state['quat'], state['gyro'], cmd,
-                                 state['reference'] if fresh else None, height=height)
+                                 reference, height=height, body_tilt=body_tilt)
             target = np.clip(target, limits[:, 0], limits[:, 1])
             publish(target)
             state['started'] = True
@@ -413,6 +484,11 @@ def main():
     node.create_subscription(Twist, '/simulation/quest/cmd_vel', on_twist, qos)
     node.create_subscription(Odometry, odom_topic, on_odom, qos)
     node.create_subscription(String, '/simulation/quest/locomotion_reference', on_world, 10)
+    if planner:
+        for side, name in enumerate(('left','right')):
+            node.create_subscription(PointStamped, f'/simulation/quest/{name}_hand_target',
+                                     lambda msg, side=side: on_hand(msg, side), 10)
+        node.get_logger().info('Whole-body reach enabled: waiting for both controller position targets')
     node.create_timer(policy.dt, update)
     node.get_logger().info(f'{mode.upper()} {policy.obs_dim}->24 at {1/policy.dt:.0f} Hz; '
                            f'Quest supplies {len(policy.upper_ids)} named references. '

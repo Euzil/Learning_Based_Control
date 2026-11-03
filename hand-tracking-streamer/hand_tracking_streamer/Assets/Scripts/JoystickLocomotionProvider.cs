@@ -68,7 +68,9 @@ public class JoystickLocomotionProvider : MonoBehaviour
         TurnInput = Mathf.Abs(turn) >= _deadZone ? turn : 0f;
         VerticalInput = upTrigger - downTrigger;
 
-        Vector3 forward = ResolveForward();
+        // Encode signed trigger travel in a fixed frame. The receiver applies
+        // the robot's measured heading, independently of the headset/camera.
+        Vector3 forward = new Vector3(Mathf.Sin(_initialHeading), 0f, Mathf.Cos(_initialHeading));
         Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
         Vector3 planarMove = forward * MoveInput.y + right * MoveInput.x;
         if (planarMove.sqrMagnitude > 1f)

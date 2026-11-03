@@ -120,6 +120,32 @@ class WorldControlTests(unittest.TestCase):
         c.accept(self.ref(3, move=0, turn=0, yaw=2), self.position, -.3, .04)
         np.testing.assert_array_equal(c.command(self.position, -.3, .04)[0], np.zeros(3))
 
+    def test_forward_tracks_changed_robot_heading_and_pending_goal(self):
+        c = self.control
+        c.accept(self.ref(1), self.position, 0, 0)
+        c.accept(self.ref(2, .1), self.position, 0, .02)
+        for yaw in (math.pi/2, math.pi, -math.pi/2):
+            cmd, _ = c.command(self.position, yaw, .03)
+            self.assertGreater(cmd[0], 0)
+            self.assertAlmostEqual(cmd[1], 0, places=12)
+            np.testing.assert_allclose(c.goal[:2]-self.position[:2],
+                                       .1*np.array([math.cos(yaw), math.sin(yaw)]), atol=1e-12)
+        c.accept(self.ref(3, .08), self.position, -math.pi/2, .04)
+        cmd, _ = c.command(self.position, -math.pi/2, .04)
+        self.assertLess(cmd[0], 0)
+        self.assertAlmostEqual(cmd[1], 0, places=12)
+
+    def test_nonzero_operator_heading_decodes_to_robot_forward(self):
+        c = self.control
+        def packet(seq, distance):
+            h = .8
+            return parse_reference(f'Locomotion reference:, {"a"*32}, {seq}, '
+                                   f'{distance*math.sin(h)}, 0, {distance*math.cos(h)}, 0, {h}, 1, 0')
+        c.accept(packet(1, 0), self.position, 0, 0)
+        c.accept(packet(2, .1), self.position, math.pi/2, .02)
+        cmd, _ = c.command(self.position, math.pi/2, .02)
+        np.testing.assert_allclose(cmd, [.15, 0, 0], atol=1e-12)
+
     def test_malformed_packet(self):
         self.assertIsNone(parse_reference('Locomotion reference:, a, 1, 0'))
         self.assertIsNone(self.ref(1, forward=float('nan')))

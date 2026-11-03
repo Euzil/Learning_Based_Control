@@ -164,11 +164,11 @@ HTS_SIM_FORWARD_PORT=9010 python scripts/sockets.py --protocol tcp --host 0.0.0.
 也可用 `--forward-port 9010` 替代环境变量；命令行优先，`--forward-port 0` 禁用转发。
 未指定转发端口时保留原来的纯接收行为。
 
-TCP 数据按换行重组，处理拆包和粘包，只将完整的 `Body joints_pose`、`Head pose`
+TCP 数据按换行重组，处理拆包和粘包，只将完整的 `Body joints_pose`、`Head pose`、`Locomotion reference`、左右 `controller_wrist`
 原样转发到本机 UDP。断开时丢弃未完成的最后一行，重新连接可继续接收。
 机器人端继续运行 `bash scripts/run_quest_teleop.sh --wbc`（或 Walk/Run）。
 数据流为 Quest → TCP 8000 → sockets.py → UDP 9010 → quest_retarget.py
-→ 上肢参考 → quest_policy.py → MuJoCo；本次不改变策略逻辑。
+→ 上肢及手柄位置参考 → 全身姿态求解与 quest_policy.py → MuJoCo。
 
 
 ### 可视化接收并转发手柄控制
@@ -179,10 +179,14 @@ TCP 数据按换行重组，处理拆包和粘包，只将完整的 `Body joints
 HTS_SIM_FORWARD_PORT=9010 python scripts/visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
 ```
 
-该入口保留人体、手指及手柄显示，并原样转发 Body、Head 和独立 Locomotion reference
+该入口保留人体、手指及手柄显示，并原样转发 Body、Head、左右 controller_wrist 和独立 Locomotion reference
 到 UDP 9010，包括每帧的偏移元数据。与 `scripts/sockets.py` 二选一，不能同时占用 TCP 8000。
 容器端继续运行 `bash scripts/run_quest_teleop.sh --wbc`。
 
 控制映射与无可视化模式一致：左右摇杆横轴转向；右/左食指扳机分别前进/后退；
 右/左握持扳机分别升高/下蹲。松开移动输入停止移动指令，高度保持。
 发送端需已安装包含新按键映射的 APK；此 Python 修改只需重启 visualizer。
+
+WBC 默认由左右手柄位置生成全身姿态参考，使身体高度、前倾/侧倾与双臂共同帮助到达目标。需要重新 Build And Run APK，以发送控制器移动偏移元数据及有效位置追踪；重启 Python 转发程序。开始 Streaming 时自然站直、面向前方，并保持两侧手柄和身体追踪有效。单侧追踪丢失保持最后目标；`--upper-only` 可禁用全身求解。详细行为和局限见 `wholebody_teleop_ws/QUEST_TELEOP.md`。
+
+前进/后退方向跟随机器人基座的当前实际朝向，而不是 Quest 头部、相机或启动时的世界方向。转向过程中仍按当前朝向前进，松开停止移动；切换后退立即清除未完成的前进目标。此更新同时涉及 Quest 发送端和机器人接收端，需要重新 Build And Run APK 并重启机器人控制程序；sockets.py / visualizer.py 的启动命令不变。

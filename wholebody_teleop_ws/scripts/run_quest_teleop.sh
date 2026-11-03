@@ -14,6 +14,7 @@ model_path=""
 policy_velocity=(0 0 0)
 velocity_set=0
 retarget_args=()
+policy_extra_args=()
 select_mode() {
     if [ -n "$policy_mode" ] && [ "$policy_mode" != "$1" ]; then
         echo 'Choose only one of --walk, --run, --wbc per launch.' >&2; exit 2
@@ -33,6 +34,10 @@ while [ "$#" -gt 0 ]; do
             fi
             if [ "$#" -lt 4 ]; then echo 'Velocity needs VX VY YAW_RATE' >&2; exit 2; fi
             policy_velocity=("$2" "$3" "$4"); velocity_set=1; shift 4 ;;
+        --upper-only) retarget_args+=("$1"); policy_extra_args+=("$1"); shift ;;
+        --body-profile) retarget_args+=("$1" "${2:?--body-profile needs a path}");
+            policy_extra_args+=("$1" "$2"); shift 2 ;;
+        --body-profile=*) retarget_args+=("$1"); policy_extra_args+=("$1"); shift ;;
         --help|-h)
             cat <<'HELP'
 Usage: bash scripts/run_quest_teleop.sh [--walk|--run|--wbc] [options]
@@ -40,6 +45,7 @@ No mode: original fixed-base Quest tracking.
 --walk / --run       Locomotion policy with Quest upper-body overrides.
 --wbc               WBC policy with Quest references, joystick movement and crouch.
                     New Quest build required; releasing sticks stops movement and holds height.
+--upper-only        Disable controller hand-position whole-body planning.
 --model PATH        Select ONNX file for the chosen mode.
 --walk-model PATH / --run-model PATH / --wbc-model PATH
                     Select mode and ONNX file together (existing aliases).
@@ -107,7 +113,7 @@ for arg in "$@"; do
 done
 if [ -n "$policy_mode" ]; then
     "$video_python" "$workspace/scripts/quest_policy.py" --config "$runtime_dir/config.yaml" \
-        --velocity "${policy_velocity[@]}" &
+        --velocity "${policy_velocity[@]}" "${policy_extra_args[@]}" &
     pids+=("$!")
 fi
 "$workspace/install/mujoco_simulation/lib/mujoco_simulation/mujoco_simulator" "$runtime_dir/config.yaml" &

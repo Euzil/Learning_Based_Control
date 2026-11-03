@@ -98,6 +98,7 @@ if model_path:
     joints['default_damping'] = policy.kd.tolist()
     config['quest_reference_topic'] = '/simulation/quest/upper_reference'
     config['policy_mode'] = mode
+    config['whole_body_default_height'] = float(policy.meta.get('default_height', .8))
     config['policy_model'] = str(Path(model_path).resolve())
     if mode == 'wbc':
         config['wbc_model'] = config['policy_model']

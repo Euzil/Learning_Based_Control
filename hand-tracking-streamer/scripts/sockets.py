@@ -22,7 +22,7 @@ import time
 
 
 class PoseForwarder:
-    """Forward complete body/head/locomotion lines without changing their values."""
+    """Forward complete body/head/controller/locomotion lines, preserving metadata."""
     def __init__(self, port):
         self.target = ('127.0.0.1', port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -30,7 +30,7 @@ class PoseForwarder:
 
     def send(self, line):
         label = line.split(b':', 1)[0].split(b'|', 1)[0].strip().lower()
-        if label in (b'body joints_pose', b'head pose', b'locomotion reference'):
+        if label in (b'body joints_pose', b'head pose', b'locomotion reference', b'left controller_wrist', b'right controller_wrist'):
             try:
                 self.sock.sendto(line, self.target)
             except OSError:
@@ -206,10 +206,10 @@ def main() -> None:
     parser.add_argument(
         "--tally",
         action="store_true",
-        help="Only count messages per second instead of printing each message.",
+        help="Only count messages per second instead of printing each message; forwarding remains enabled.",
     )
     parser.add_argument('--forward-port', type=int, default=None,
-                        help='Forward body/head poses to localhost UDP; defaults to HTS_SIM_FORWARD_PORT.')
+                        help='Forward body/head/controller poses and locomotion references to localhost UDP; defaults to HTS_SIM_FORWARD_PORT.')
     args = parser.parse_args()
     try:
         forward_port = (args.forward_port if args.forward_port is not None else
@@ -231,7 +231,7 @@ def main() -> None:
         parser.error('UDP receiving and forwarding ports must differ')
     forwarder = PoseForwarder(forward_port) if forward_port else None
     if forwarder:
-        logging.info('Forwarding Body joints_pose and Head pose to UDP 127.0.0.1:%d', forward_port)
+        logging.info('Forwarding Body joints_pose, Head pose, left/right controller_wrist and Locomotion reference to UDP 127.0.0.1:%d', forward_port)
     try:
         if args.protocol == "udp":
             run_udp_listener(host, port, args.tally, forwarder)

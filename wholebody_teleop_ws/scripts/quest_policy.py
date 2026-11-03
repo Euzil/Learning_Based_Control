@@ -5,6 +5,8 @@ from pathlib import Path
 import numpy as np
 import onnxruntime as ort
 
+from quest_locomotion import WorldReferenceController, parse_reference, yaw_from_xyzw
+
 
 DEFAULT_WBC_MODEL = (Path(__file__).resolve().parents[1] / 'models' /
                      'pm01_wbc' / '20260721_211647.onnx')
@@ -171,7 +173,12 @@ class QuestPolicy:
         return np.concatenate([b.ravel() for b in self.buffers]).astype(np.float32)
 
     def step(self, position, velocity, quaternion_xyzw, angular_velocity, command,
-             reference=None):
+             reference=None, height=None):
+        if height is not None:
+            if not self.is_wbc or not np.isfinite(height):
+                raise ValueError("Height commands require WBC and a finite value")
+            desired_height = np.clip(height, *self.meta["range_height"])
+            self.loco_command[3] += np.clip(desired_height-self.loco_command[3], -.2*self.dt, .2*self.dt)
         if reference is not None:
             desired = vector(reference, len(self.upper_ids), 'Quest upper reference').copy()
             for name, bounds in zip(self.arm_names, self.arm_ranges):
@@ -240,18 +247,27 @@ def main():
     from sensor_msgs.msg import JointState as NamedJointState
     from rclpy.executors import ExternalShutdownException
     from rosgraph_msgs.msg import Clock
-    from geometry_msgs.msg import Twist
+    from geometry_msgs.msg import Twist, PoseStamped
+    from nav_msgs.msg import Odometry
+    from std_msgs.msg import String
 
     rclpy.init()
     node = rclpy.create_node(f'quest_{mode}_controller')
     node.set_parameters([Parameter('use_sim_time', value=True)])
     qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
     pub = node.create_publisher(JointCommand, joints['command_topic'], qos)
+    goal_pub = node.create_publisher(PoseStamped, '/simulation/quest/world_target', 10)
+    world = WorldReferenceController(policy.meta.get('default_height', .8),
+                                     policy.meta.get('range_height', [.8, .8]))
+    odom_topic = robot['sensors']['odom_sensors'][0]['topic']
+    if not odom_topic.startswith('/simulation/'):
+        parser.error('World control requires isolated /simulation/ odometry')
     state = {'q': None, 'dq': None, 'quat': None, 'gyro': None,
              'joint_time': -np.inf, 'imu_time': -np.inf,
              'reference': None, 'reference_time': -np.inf,
              'clock': None, 'twist': None, 'twist_time': -np.inf,
-             'fault': False, 'tracking': False, 'started': False}
+             'fault': False, 'tracking': False, 'started': False,
+             'odom': None, 'odom_time': -np.inf, 'odom_frame': '', 'world_seen': False}
 
     def on_joints(msg):
         try:
@@ -286,10 +302,35 @@ def main():
         if np.isfinite(cmd).all():
             state.update(twist=cmd, twist_time=time.monotonic())
 
+    def on_odom(msg):
+        p, q = msg.pose.pose.position, msg.pose.pose.orientation
+        position = np.array([p.x, p.y, p.z])
+        try:
+            yaw = yaw_from_xyzw([q.x, q.y, q.z, q.w])
+        except ValueError:
+            return
+        if np.isfinite(position).all():
+            state.update(odom=(position, yaw), odom_time=time.monotonic(),
+                         odom_frame=msg.header.frame_id)
+
+    def on_world(msg):
+        ref = parse_reference(msg.data)
+        now = time.monotonic()
+        if ref is None or state['odom'] is None or now-state['odom_time'] > .3:
+            return
+        if world.accept(ref, *state['odom'], now):
+            if not state['world_seen']:
+                node.get_logger().info('Joystick world reference connected; release stops movement; height holds')
+                if not policy.is_wbc:
+                    node.get_logger().warning('Walk/Run support planar motion only; crouch requires --wbc')
+            state['world_seen'] = True
+
     def on_clock(msg):
         stamp = msg.clock.sec + msg.clock.nanosec*1e-9
         if state['clock'] is not None and stamp < state['clock']:
             policy.reset()
+            world.reset()
+            state.update(odom=None, odom_time=-np.inf, world_seen=False)
             state.update(q=None, quat=None, reference=None, reference_time=-np.inf,
                          fault=False, started=False, tracking=False, twist=None, twist_time=-np.inf)
             node.get_logger().info('Simulation reset: cleared policy history and Quest reference')
@@ -332,11 +373,31 @@ def main():
         cmd = requested_velocity.copy()
         if state['twist'] is not None:
             cmd = state['twist'] if now-state['twist_time'] <= .3 else np.zeros(3)
+        height = None
+        if state['world_seen']:
+            # Once joystick control owns locomotion, stale input never falls back to an old Twist.
+            odom_fresh = state['odom'] is not None and now-state['odom_time'] <= .3
+            if state['odom'] is not None:
+                cmd, requested_height = world.command(*state['odom'], now,
+                                                      enabled=fresh and odom_fresh)
+                if policy.is_wbc:
+                    height = requested_height
+                if world.goal is not None:
+                    goal = PoseStamped()
+                    goal.header.stamp = node.get_clock().now().to_msg()
+                    goal.header.frame_id = state['odom_frame']
+                    goal.pose.position.x, goal.pose.position.y = map(float, world.goal[:2])
+                    goal.pose.position.z = float(policy.loco_command[3] if height is None else height)
+                    goal.pose.orientation.z = float(np.sin(world.goal[2]/2))
+                    goal.pose.orientation.w = float(np.cos(world.goal[2]/2))
+                    goal_pub.publish(goal)
+            else:
+                cmd = np.zeros(3)
         if not fresh:
             cmd = np.zeros(3)
         try:
             target = policy.step(state['q'], state['dq'], state['quat'], state['gyro'], cmd,
-                                 state['reference'] if fresh else None)
+                                 state['reference'] if fresh else None, height=height)
             target = np.clip(target, limits[:, 0], limits[:, 1])
             publish(target)
             state['started'] = True
@@ -350,6 +411,8 @@ def main():
     node.create_subscription(NamedJointState, reference_topic, on_reference, qos)
     node.create_subscription(Clock, '/clock', on_clock, qos)
     node.create_subscription(Twist, '/simulation/quest/cmd_vel', on_twist, qos)
+    node.create_subscription(Odometry, odom_topic, on_odom, qos)
+    node.create_subscription(String, '/simulation/quest/locomotion_reference', on_world, 10)
     node.create_timer(policy.dt, update)
     node.get_logger().info(f'{mode.upper()} {policy.obs_dim}->24 at {1/policy.dt:.0f} Hz; '
                            f'Quest supplies {len(policy.upper_ids)} named references. '

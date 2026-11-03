@@ -102,4 +102,5 @@ if model_path:
     if mode == 'wbc':
         config['wbc_model'] = config['policy_model']
     config['robots'][0]['sensors']['imu_sensors'][0]['topic'] = '/simulation/quest/imu'
+    config['robots'][0]['sensors']['odom_sensors'][0]['topic'] = '/simulation/quest/odom'
 (out / 'config.yaml').write_text(yaml.safe_dump(config))

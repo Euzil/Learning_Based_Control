@@ -169,3 +169,20 @@ TCP 数据按换行重组，处理拆包和粘包，只将完整的 `Body joints
 机器人端继续运行 `bash scripts/run_quest_teleop.sh --wbc`（或 Walk/Run）。
 数据流为 Quest → TCP 8000 → sockets.py → UDP 9010 → quest_retarget.py
 → 上肢参考 → quest_policy.py → MuJoCo；本次不改变策略逻辑。
+
+
+### 可视化接收并转发手柄控制
+
+在宿主机 `hand-tracking-streamer` 目录及 `(hts)` 环境运行：
+
+```bash
+HTS_SIM_FORWARD_PORT=9010 python scripts/visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
+```
+
+该入口保留人体、手指及手柄显示，并原样转发 Body、Head 和独立 Locomotion reference
+到 UDP 9010，包括每帧的偏移元数据。与 `scripts/sockets.py` 二选一，不能同时占用 TCP 8000。
+容器端继续运行 `bash scripts/run_quest_teleop.sh --wbc`。
+
+控制映射与无可视化模式一致：左右摇杆横轴转向；右/左食指扳机分别前进/后退；
+右/左握持扳机分别升高/下蹲。松开移动输入停止移动指令，高度保持。
+发送端需已安装包含新按键映射的 APK；此 Python 修改只需重启 visualizer。

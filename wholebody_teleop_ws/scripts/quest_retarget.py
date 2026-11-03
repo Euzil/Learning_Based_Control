@@ -10,6 +10,7 @@ import mujoco
 import numpy as np
 import yaml
 
+from quest_locomotion import parse_reference, remove_locomotion
 from quest_body_profile import BodyProfile
 from quest_tracking import body_features
 from quest_calibration import CalibrationSession
@@ -209,7 +210,7 @@ def parse_pose(line):
         return None
     if values.size != 490 or not np.isfinite(values).all():
         return None
-    return values.reshape(70, 7)
+    return remove_locomotion(label, values.reshape(70, 7))
 
 
 def parse_head(line):
@@ -222,7 +223,7 @@ def parse_head(line):
         return None
     if values.shape != (7,) or not np.isfinite(values).all() or np.linalg.norm(values[3:]) < .1:
         return None
-    return values
+    return remove_locomotion(label, values)
 
 
 def main():
@@ -286,6 +287,8 @@ def main():
     from rclpy.qos import QoSProfile, ReliabilityPolicy
     rclpy.init()
     node = rclpy.create_node('quest_sim_retarget')
+    from std_msgs.msg import String
+    locomotion_pub = node.create_publisher(String, '/simulation/quest/locomotion_reference', 10)
     reference_only = solver.reference_topic is not None
     topic = solver.reference_topic if reference_only else solver.joints['command_topic']
     if not topic.startswith('/simulation/') or not solver.joints['state_topic'].startswith('/simulation/'):
@@ -320,6 +323,7 @@ def main():
     stale = True
     last_error_log = -math.inf
     head_pose, head_time = None, -math.inf
+    warned_fixed_locomotion = False
     logging.warning('Waiting for forwarded Body joints_pose on 127.0.0.1:%d', args.port)
     try:
         while rclpy.ok():
@@ -333,6 +337,13 @@ def main():
                 except BlockingIOError:
                     break
                 for line in packet.splitlines():
+                    if parse_reference(line) is not None:
+                        if reference_only:
+                            locomotion_pub.publish(String(data=line))
+                        elif not warned_fixed_locomotion:
+                            logging.warning('Controller locomotion requires --wbc (or --walk/--run); '
+                                            'fixed-base mode cannot turn or move the robot base.')
+                            warned_fixed_locomotion = True
                     head = parse_head(line)
                     if head is not None:
                         head_pose, head_time = head, start

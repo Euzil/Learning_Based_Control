@@ -46,6 +46,22 @@ class TrackingTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.runtime.cleanup()
 
+    def test_controller_translation_does_not_change_head_or_arm_reference(self):
+        # New sender keeps physical orientation; all controller yaw is in the independent packet.
+        poses = sample()
+        head = np.array([0., 1.5, 0., 0., 0., 0., 1.])
+        shifted = poses.copy()
+        shifted[:, :3] += [2., -.2, 3.]
+        shifted_head = head.copy()
+        shifted_head[:3] += [2., -.2, 3.]
+        body_line = 'Body joints_pose | locomotion = 2 -.2 3 0:,' + ','.join(map(str, shifted.ravel()))
+        head_line = 'Head pose | locomotion = 2 -.2 3 0:,' + ','.join(map(str, shifted_head))
+        a, b = Retargeter(self.config), Retargeter(self.config)
+        for _ in range(10):
+            expected = a.solve(poses, .02, head)
+            actual = b.solve(parse_pose(body_line), .02, parse_head(head_line))
+        np.testing.assert_allclose(actual, expected, atol=1e-8)
+
     def test_parser_rejects_corruption(self):
         self.assertIsNone(parse_pose('Body joints_pose:, 1,2,nan'))
         self.assertIsNone(parse_pose('Body joints_pose:,' + ','.join(['nan']*490)))

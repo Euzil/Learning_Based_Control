@@ -142,3 +142,16 @@ bash scripts/setup_quest_video.sh
 ```
 
 该脚本安装 Python venv 支持、创建独立视频环境并验证 ROS/WebRTC 依赖；完成后重新执行 `bash scripts/run_quest_sim_video.sh`。
+
+
+## 桌面登录后渲染授权失效
+
+如果出现 `Authorization required` / `could not initialize GLFW`，在宿主机项目根目录执行：
+
+```bash
+bash wholebody_teleop_ws/scripts/authorize_quest_display.sh
+```
+
+重新启动容器中的原启动命令。两个启动入口会自动使用生成的桌面授权文件。
+视频仍需在 Unity `VideoSystem → VideoStreamManager → Video Host` 中填写当前电脑局域网 IP。
+不要同时启动 `run_quest_sim_video.sh` 和 `run_quest_teleop.sh`，两者都会启动模拟器和视频服务。

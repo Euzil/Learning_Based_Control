@@ -22,7 +22,7 @@ import time
 
 
 class PoseForwarder:
-    """Forward complete body/head lines without parsing or changing their values."""
+    """Forward complete body/head/locomotion lines without changing their values."""
     def __init__(self, port):
         self.target = ('127.0.0.1', port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -30,7 +30,7 @@ class PoseForwarder:
 
     def send(self, line):
         label = line.split(b':', 1)[0].split(b'|', 1)[0].strip().lower()
-        if label in (b'body joints_pose', b'head pose'):
+        if label in (b'body joints_pose', b'head pose', b'locomotion reference'):
             try:
                 self.sock.sendto(line, self.target)
             except OSError:

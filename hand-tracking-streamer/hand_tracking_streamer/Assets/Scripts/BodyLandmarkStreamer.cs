@@ -258,7 +258,13 @@ public class BodyLandmarkStreamer : MonoBehaviour
         }
 
         _lastDiagnostic = $"Streaming upper body. Valid joints: {validJointCount}/{_upperBodyJoints.Length}. High confidence: {_body.IsHighConfidence}";
-        SendData(_sbPacket.ToString());
+        string packet = _sbPacket.ToString();
+        if (_locomotionProvider != null)
+        {
+            packet = _locomotionProvider.AnnotateTracking(packet);
+            packet += "\n" + _locomotionProvider.ReferencePacket();
+        }
+        SendData(packet);
     }
 
     private Pose ApplyLocomotion(Pose source)

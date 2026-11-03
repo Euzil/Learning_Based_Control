@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Globalization;
 
 public class JoystickLocomotionProvider : MonoBehaviour
 {
@@ -22,6 +23,28 @@ public class JoystickLocomotionProvider : MonoBehaviour
 
     public bool HasMotionInput => MoveInput.sqrMagnitude > 0.0001f || Mathf.Abs(TurnInput) > 0.0001f || Mathf.Abs(VerticalInput) > 0.0001f;
 
+    private string _session = System.Guid.NewGuid().ToString("N");
+    private uint _sequence;
+    private float _initialHeading;
+
+    // Tracking orientation stays physical. Joystick yaw is sent only in ReferencePacket.
+    // Metadata describes only the translation actually applied to this tracking frame.
+    public string AnnotateTracking(string packet)
+    {
+        string offset = string.Format(CultureInfo.InvariantCulture,
+            " | locomotion = {0:R} {1:R} {2:R} {3:R}",
+            PositionOffset.x, PositionOffset.y, PositionOffset.z, 0f);
+        return packet.Replace(":", offset + ":");
+    }
+
+    public string ReferencePacket()
+    {
+        return string.Format(CultureInfo.InvariantCulture,
+            "Locomotion reference:, {0}, {1}, {2:R}, {3:R}, {4:R}, {5:R}, {6:R}, {7:R}, {8:R}",
+            _session, ++_sequence, PositionOffset.x, PositionOffset.y, PositionOffset.z,
+            YawOffsetDegrees * Mathf.Deg2Rad, _initialHeading, MoveInput.magnitude, TurnInput);
+    }
+
     private void Update()
     {
         if (!_enabled || AppManager.Instance == null || !AppManager.Instance.isStreaming)
@@ -32,12 +55,18 @@ public class JoystickLocomotionProvider : MonoBehaviour
             return;
         }
 
-        Vector2 move = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
-        Vector2 turnAndHeight = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick, OVRInput.Controller.RTouch);
+        // Raw axes avoid the virtual Primary/Secondary remapping of individual Touch devices.
+        Vector2 leftStick = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick, OVRInput.Controller.Touch);
+        Vector2 rightStick = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick, OVRInput.Controller.Touch);
+        float forwardTrigger = Trigger(OVRInput.RawAxis1D.RIndexTrigger);
+        float backwardTrigger = Trigger(OVRInput.RawAxis1D.LIndexTrigger);
+        float upTrigger = Trigger(OVRInput.RawAxis1D.RHandTrigger);
+        float downTrigger = Trigger(OVRInput.RawAxis1D.LHandTrigger);
 
-        MoveInput = ApplyDeadZone(move);
-        TurnInput = Mathf.Abs(turnAndHeight.x) >= _deadZone ? turnAndHeight.x : 0f;
-        VerticalInput = Mathf.Abs(turnAndHeight.y) >= _deadZone ? turnAndHeight.y : 0f;
+        MoveInput = new Vector2(0f, forwardTrigger - backwardTrigger);
+        float turn = Mathf.Abs(leftStick.x) > Mathf.Abs(rightStick.x) ? leftStick.x : rightStick.x;
+        TurnInput = Mathf.Abs(turn) >= _deadZone ? turn : 0f;
+        VerticalInput = upTrigger - downTrigger;
 
         Vector3 forward = ResolveForward();
         Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
@@ -58,8 +87,7 @@ public class JoystickLocomotionProvider : MonoBehaviour
 
     public Pose ApplyToPose(Pose source)
     {
-        Quaternion yawRotation = Quaternion.Euler(0f, YawOffsetDegrees, 0f);
-        return new Pose(source.position + PositionOffset, yawRotation * source.rotation);
+        return new Pose(source.position + PositionOffset, source.rotation);
     }
 
     public Vector3 ApplyToPosition(Vector3 source)
@@ -69,8 +97,7 @@ public class JoystickLocomotionProvider : MonoBehaviour
 
     public Pose ApplyHorizontalToPose(Pose source)
     {
-        Quaternion yawRotation = Quaternion.Euler(0f, YawOffsetDegrees, 0f);
-        return new Pose(source.position + HorizontalOffset, yawRotation * source.rotation);
+        return new Pose(source.position + HorizontalOffset, source.rotation);
     }
 
     public Vector3 ApplyHorizontalToPosition(Vector3 source)
@@ -80,6 +107,10 @@ public class JoystickLocomotionProvider : MonoBehaviour
 
     public void ResetLocomotion()
     {
+        _session = System.Guid.NewGuid().ToString("N");
+        _sequence = 0;
+        Vector3 initialForward = ResolveForward();
+        _initialHeading = Mathf.Atan2(initialForward.x, initialForward.z);
         PositionOffset = Vector3.zero;
         YawOffsetDegrees = 0f;
         MoveInput = Vector2.zero;
@@ -105,13 +136,9 @@ public class JoystickLocomotionProvider : MonoBehaviour
         return forward.normalized;
     }
 
-    private Vector2 ApplyDeadZone(Vector2 input)
+    private float Trigger(OVRInput.RawAxis1D axis)
     {
-        if (input.magnitude < _deadZone)
-        {
-            return Vector2.zero;
-        }
-
-        return Vector2.ClampMagnitude(input, 1f);
+        float value = OVRInput.Get(axis, OVRInput.Controller.Touch);
+        return value <= _deadZone ? 0f : Mathf.Clamp01((value - _deadZone) / (1f - _deadZone));
     }
 }

@@ -5,6 +5,9 @@ workspace="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source /opt/ros/humble/setup.bash
 source "$workspace/install/setup.bash"
 export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-87}" ROS_LOCALHOST_ONLY=1
+if [ -z "${XAUTHORITY:-}" ] && [ -r /tmp/quest-display.Xauthority ]; then
+    export XAUTHORITY=/tmp/quest-display.Xauthority
+fi
 video_python="${QUEST_VIDEO_PYTHON:-/home/devel/quest-video-venv/bin/python}"
 policy_mode=""
 model_path=""
@@ -35,7 +38,8 @@ while [ "$#" -gt 0 ]; do
 Usage: bash scripts/run_quest_teleop.sh [--walk|--run|--wbc] [options]
 No mode: original fixed-base Quest tracking.
 --walk / --run       Locomotion policy with Quest upper-body overrides.
---wbc               WBC policy with Quest references as policy inputs.
+--wbc               WBC policy with Quest references, joystick movement and crouch.
+                    New Quest build required; releasing sticks stops movement and holds height.
 --model PATH        Select ONNX file for the chosen mode.
 --walk-model PATH / --run-model PATH / --wbc-model PATH
                     Select mode and ONNX file together (existing aliases).

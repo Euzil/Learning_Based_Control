@@ -6,6 +6,9 @@ source /opt/ros/humble/setup.bash
 source "$workspace/install/setup.bash"
 export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-87}"
 export ROS_LOCALHOST_ONLY=1
+if [ -z "${XAUTHORITY:-}" ] && [ -r /tmp/quest-display.Xauthority ]; then
+    export XAUTHORITY=/tmp/quest-display.Xauthority
+fi
 video_python="${QUEST_VIDEO_PYTHON:-/home/devel/quest-video-venv/bin/python}"
 if ! "$video_python" -c 'import aiortc, aiohttp, rclpy' >/dev/null 2>&1; then
     echo "Video dependencies missing. Run inside this container: bash \"$workspace/scripts/setup_quest_video.sh\"" >&2

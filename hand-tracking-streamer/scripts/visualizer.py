@@ -3,6 +3,9 @@
 Usage:
     python visualizer.py --protocol udp --host 0.0.0.0 --port 9000
     python visualizer.py --protocol tcp --host localhost --port 8000
+    HTS_SIM_FORWARD_PORT=9010 python visualizer.py --protocol tcp --host 0.0.0.0 --port 8000 --show-fingers
+
+Forwarding preserves body/head metadata and independent controller locomotion references.
 """
 
 from __future__ import annotations
@@ -282,7 +285,7 @@ class StreamReceiver:
                 thread.join(timeout=0.5)
 
     def _handle_line(self, line: str) -> None:
-        if self._forward_socket is not None and line.split(":", 1)[0].split("|", 1)[0].strip().lower() in ("body joints_pose", "head pose"):
+        if self._forward_socket is not None and line.split(":", 1)[0].split("|", 1)[0].strip().lower() in ("body joints_pose", "head pose", "locomotion reference"):
             try:
                 self._forward_socket.sendto(line.encode("utf-8"), self._forward_target)
             except OSError:

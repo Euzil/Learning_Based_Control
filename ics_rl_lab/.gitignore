@@ -34,8 +34,8 @@ data/
 .DS_Store
 nohup.out
 
-# NOTE: src/ics_rl_lab/assets/ (XML + meshes) IS committed on purpose. vendor/ics_rl/ is a
-# git submodule.
+# NOTE: src/ics_rl_lab/assets/ (XML + meshes) and vendor/ics_rl/ are committed
+# as ordinary files in the parent Learning_Based_Control repository.
 
 # --- Local development notes (not published)
 Claude.md

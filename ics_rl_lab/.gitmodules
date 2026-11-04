@@ -1,3 +1,0 @@
-[submodule "vendor/ics_rl"]
-	path = vendor/ics_rl
-	url = ssh://git@gitlab.ics.ei.tum.de:2220/rl/learning/ics_rl.git

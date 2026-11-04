@@ -29,7 +29,7 @@ AMP policy trained with this code: 21 km, 39th of 124 robots, and the
 
 - **EngineAI PM01**: all tasks; tested on the real robot
 - **Tienkung Ultra**: AMP; tested on the real robot, outdoors and in the half marathon
-- **EngineAI S2**: AMP, simulation only
+- **Ubtech Walker S2**: AMP, simulation only
 - **Unitree G1**: AMP, simulation only
 
 **Built with**
@@ -70,10 +70,15 @@ AMP policy trained with this code: 21 km, 39th of 124 robots, and the
 ## Install
 
 ```bash
-git clone --recurse-submodules https://github.com/TUM-ICS/ics_rl_lab.git
-cd ics_rl_lab
+git clone https://github.com/Euzil/Learning_Based_Control.git
+cd Learning_Based_Control/ics_rl_lab
 uv sync
 ```
+
+This copy includes `vendor/ics_rl` as ordinary source files managed by the parent
+repository. No submodule initialization is needed. The upstream repositories are
+[ics_rl_lab](https://github.com/TUM-ICS/ics_rl_lab) and
+[ics_rl](https://github.com/TUM-ICS/ics_rl).
 
 * **Linux**, Python **3.11–3.13** (3.13 is pinned in `.python-version`)
 * [**uv**](https://docs.astral.sh/uv/): `curl -LsSf https://astral.sh/uv/install.sh | sh`

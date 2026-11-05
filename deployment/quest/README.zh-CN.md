@@ -3,6 +3,10 @@
 只保留一个部署方案：GitHub 拉取源码，Docker 运行接收器、WBC 仿真和相机，
 使用服务器 NVIDIA Xorg 进行无显示器 GPU 渲染。电脑通过 SSH 查看相机监控。
 
+如果账号没有 Docker 使用权限或 sudo 权限，可先按第 6、7 节建立用户目录下的
+Python 虚拟环境，不需要 Conda。Python 环境不会解决 Docker 权限问题；
+第 2 节的容器部署仍需管理员开通权限或提供服务器允许的容器方案。
+
 ```text
 Quest ── TCP 8000 ──> 服务器 receiver ── 本机 UDP 9010 ──> 仿真
 Quest <── WebRTC ──── 服务器视频服务（信令 TCP 8765，媒体由 ICE 协商）
@@ -120,7 +124,8 @@ C++/ROS 改动后停止 teleop、重新 `docker compose run --rm build` 再启�
 
 ## 6. 独立 hts 虚拟环境（开发、数据处理、模型实验）
 
-这是服务器宿主机上的 Conda 环境，与 Docker 的 ROS/Python 环境独立。
+这是服务器宿主机上的普通 Python `venv` 环境，与 Docker 的 ROS/Python 环境独立。
+使用 uv 在用户目录安装 Python 和创建虚拟环境，不需要 Conda，也不需要 sudo。
 `requirements-hts.lock.txt` 保留当前 hts 中全部按包名安装的 pip 包及版本，
 包括 hand-tracking-sdk、MuJoCo、ONNX Runtime、NumPy、SciPy、Matplotlib、Qt、Redis 等。
 它不是只运行 sockets.py 的精简列表；也不是整台机器的系统库快照。
@@ -128,26 +133,48 @@ C++/ROS 改动后停止 teleop、重新 `docker compose run --rm build` 再启�
 未实际创建新环境，也未更改现有 hts。
 Qt 图形程序依赖显示服务，在纯 SSH 下安装成功不代表能弹出窗口。
 
-新主机先安装 Conda/Miniconda，然后从项目根目录：
+以下命令在服务器的普通用户终端执行。首先安装用户级 uv：
 
 ```bash
-cd deployment/quest
-conda env create -f environment-hts.yml
-conda activate hts
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uv --version
+```
+
+参考：[uv 官方安装说明](https://docs.astral.sh/uv/getting-started/installation/)、
+[Python 版本管理](https://docs.astral.sh/uv/guides/install-python/)。
+下载 Python 和依赖需要服务器能访问对应下载站及包源。
+
+首次创建 hts 环境并安装依赖（假设仓库在 `~/Learning_Based_Control`）：
+
+```bash
+uv python install 3.13
+uv venv --python 3.13 --seed "$HOME/.venvs/hts"
+source "$HOME/.venvs/hts/bin/activate"
+
+cd ~/Learning_Based_Control/deployment/quest
+python -m pip install -r requirements-hts.lock.txt
 python -m pip check
 python -c "import numpy, scipy, mujoco, onnxruntime, matplotlib; print(numpy.__version__, mujoco.__version__)"
 cd ../../hand-tracking-streamer
 python scripts/sockets.py --help
 ```
 
-若服务器已有同名环境，不要直接覆盖；可以创建独立名称：
+`--seed` 为虚拟环境安装 pip；Python 3.13 与原 hts 环境保持同一版本系列，
+不会替换服务器系统 Python。若仓库路径不同，修改上面的 `cd` 路径。
+若 `~/.venvs/hts` 已存在，先确认它是否是要使用的环境，不要覆盖；
+需要新环境时，把创建和激活命令中的路径都改为 `~/.venvs/hts-server`。
+
+以后每次登录只需激活，退出环境使用 `deactivate`：
 
 ```bash
-conda env create -n hts-server -f environment-hts.yml
-conda activate hts-server
+source "$HOME/.venvs/hts/bin/activate"
+# 完成工作后
+# deactivate
 ```
 
-Conda 文件没有旧电脑 prefix 路径。包版本来自旧环境快照，目标主机仍需能从包源获取对应版本；
+不再需要执行 `conda env create` 或使用 `environment-hts.yml`；该 YAML 仅保留供已有 Conda 用户使用。
+依赖仍来自 `requirements-hts.lock.txt`，不复制旧电脑绝对路径。
 若某个版本不可下载，应核对原包源或导出对应 wheel，不应随意升级整套环境。
 此文件不包含系统 NVIDIA 驱动或 Isaac Gym 本体；`isaacgym-stubs` 仅为接口 stub 包。
 
@@ -169,17 +196,19 @@ Conda 文件没有旧电脑 prefix 路径。包版本来自旧环境快照，目
 当前 hts 没有 PyTorch，恢复 hts 不等于已安装完整训练栈。
 若训练本仓库 `ics_rl_lab`，使用它已有的 pyproject/uv.lock 创建独立 `.venv`：
 
+第 6 节安装的 uv 可以直接创建训练环境，无需再向 hts 安装 uv 或 PyTorch。
+在新终端执行（若当前激活了 hts，先运行 `deactivate`）：
+
 ```bash
-conda activate hts
-python -m pip install uv
-# 进入仓库内的 ics_rl_lab 目录
-cd /你的项目路径/Learning_Based_Control/ics_rl_lab
-python -m uv sync --locked
-python -m uv run --locked python -c "import torch, mujoco; print(torch.__version__, mujoco.__version__); print('CUDA:', torch.cuda.is_available())"
-python -m uv run --locked scripts/train.py --help
+export PATH="$HOME/.local/bin:$PATH"
+cd ~/Learning_Based_Control/ics_rl_lab
+uv sync --locked
+uv run --locked python -c "import torch, mujoco; print(torch.__version__, mujoco.__version__); print('CUDA:', torch.cuda.is_available())"
+uv run --locked scripts/train.py --help
 ```
 
-uv 工具安装在 hts 中，但训练依赖放在 `ics_rl_lab/.venv`，不会覆盖 hts 的包。
+训练依赖位于 `ics_rl_lab/.venv`，hts 依赖位于 `~/.venvs/hts`；两者独立。
+`uv run` 自动使用训练项目环境，不需要手动激活 `.venv`。
 ICS 项目要求 MuJoCo 3.6.0、Torch 2.10.0，以及配套 mjlab/mujoco-warp/warp-lang；
 当前 hts 使用 MuJoCo 3.11.0，不能把两份依赖简单合并。
 GPU 驱动兼容性、CUDA 可用性及实际训练需要在目标服务器验收；本次不启动训练。

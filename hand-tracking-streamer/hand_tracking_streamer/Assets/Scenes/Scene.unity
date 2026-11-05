@@ -14410,7 +14410,7 @@ MonoBehaviour:
   statsOverlay: {fileID: 1568247183}
   logSource: Left
   automaticRobotVision: 1
-  videoHost: 10.181.230.54
+  videoHost: 10.152.246.23
   videoPort: 8765
   retrySeconds: 3
   firstFrameTimeoutSeconds: 15

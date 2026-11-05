@@ -63,7 +63,8 @@ docker compose logs --tail=100 teleop receiver
 原 robotics 基础 Dockerfile 下载外部工具链，本轮没有重新执行完整从零构建；
 部署镜像和独立 ROS 构建此前在现有基础镜像上验证过。
 
-不需要额外安装宿主机 `hts`、ROS 或 Unity。接收程序只依赖 Python 标准库；
+Docker 接收服务不依赖宿主机 `hts`；开发、录制和模型实验使用第 6 节的独立虚拟环境。
+服务器无需额外安装宿主机 ROS 或 Unity。接收程序只依赖 Python 标准库；
 仿真和视频使用容器内 Python 3.10 venv、NumPy 1.x，具体版本在依赖锁文件中。
 GPU 渲染入口会检查 OpenGL 厂商，未正确使用 NVIDIA 时退出并提示，不会悄悄切到慢速软件渲染。
 当前 WBC 策略仍使用 ONNX Runtime CPU provider；GPU 在这里用于画面渲染。
@@ -116,3 +117,70 @@ C++/ROS 改动后停止 teleop、重新 `docker compose run --rm build` 再启�
 
 无画面时按顺序检查：NVIDIA OpenGL → 相机 health → 浏览器 monitor → Quest WebRTC。
 本次已通过图像处理、HTTP 503、JPEG 缓存及浏览器暂停/恢复检查；目标服务器的实际 GPU 性能尚未验证。
+
+## 6. 独立 hts 虚拟环境（开发、数据处理、模型实验）
+
+这是服务器宿主机上的 Conda 环境，与 Docker 的 ROS/Python 环境独立。
+`requirements-hts.lock.txt` 保留当前 hts 中全部按包名安装的 pip 包及版本，
+包括 hand-tracking-sdk、MuJoCo、ONNX Runtime、NumPy、SciPy、Matplotlib、Qt、Redis 等。
+它不是只运行 sockets.py 的精简列表；也不是整台机器的系统库快照。
+已在本机 Python 3.13 下以忽略现有安装的 pip dry-run 验证：46 个固定版本能够解析，
+未实际创建新环境，也未更改现有 hts。
+Qt 图形程序依赖显示服务，在纯 SSH 下安装成功不代表能弹出窗口。
+
+新主机先安装 Conda/Miniconda，然后从项目根目录：
+
+```bash
+cd deployment/quest
+conda env create -f environment-hts.yml
+conda activate hts
+python -m pip check
+python -c "import numpy, scipy, mujoco, onnxruntime, matplotlib; print(numpy.__version__, mujoco.__version__)"
+cd ../../hand-tracking-streamer
+python scripts/sockets.py --help
+```
+
+若服务器已有同名环境，不要直接覆盖；可以创建独立名称：
+
+```bash
+conda env create -n hts-server -f environment-hts.yml
+conda activate hts-server
+```
+
+Conda 文件没有旧电脑 prefix 路径。包版本来自旧环境快照，目标主机仍需能从包源获取对应版本；
+若某个版本不可下载，应核对原包源或导出对应 wheel，不应随意升级整套环境。
+此文件不包含系统 NVIDIA 驱动或 Isaac Gym 本体；`isaacgym-stubs` 仅为接口 stub 包。
+
+### 两个不能直接迁移的本地 editable 安装
+
+- `pose`：原来指向 `TWIST2/pose`，该源码不在本次迁移目录中。使用相关功能前，
+  先把对应源码迁到服务器，再在 hts 中 `python -m pip install -e /实际路径/TWIST2/pose`。
+- `quest-wrist-tracker`：原来指向旧电脑 `/home/youran/hand-tracking-streamer`。
+  当前接收/录制脚本可以直接从本仓库运行，不必执行 editable 安装。
+  原项目 pyproject 声明 `numpy>=2.4.2`，实际 hts 却是 `numpy==2.2.6`；
+  为保留实际环境，本快照不安装这个存在版本冲突的项目元数据。
+  如要把它作为包安装，应先确认并修正项目依赖声明，不要使用 `--no-deps` 隐藏冲突。
+
+要在 hts 中手动运行接收器时，先 `docker compose stop receiver`，避免占用同一个 8000 端口。
+使用默认 Docker receiver 时，hts 可用于独立数据处理，无需启动第二份 sockets.py。
+
+## 7. 模型训练环境
+
+当前 hts 没有 PyTorch，恢复 hts 不等于已安装完整训练栈。
+若训练本仓库 `ics_rl_lab`，使用它已有的 pyproject/uv.lock 创建独立 `.venv`：
+
+```bash
+conda activate hts
+python -m pip install uv
+# 进入仓库内的 ics_rl_lab 目录
+cd /你的项目路径/Learning_Based_Control/ics_rl_lab
+python -m uv sync --locked
+python -m uv run --locked python -c "import torch, mujoco; print(torch.__version__, mujoco.__version__); print('CUDA:', torch.cuda.is_available())"
+python -m uv run --locked scripts/train.py --help
+```
+
+uv 工具安装在 hts 中，但训练依赖放在 `ics_rl_lab/.venv`，不会覆盖 hts 的包。
+ICS 项目要求 MuJoCo 3.6.0、Torch 2.10.0，以及配套 mjlab/mujoco-warp/warp-lang；
+当前 hts 使用 MuJoCo 3.11.0，不能把两份依赖简单合并。
+GPU 驱动兼容性、CUDA 可用性及实际训练需要在目标服务器验收；本次不启动训练。
+其他训练项目也应按其依赖清单创建专用环境，不直接向 ROS 容器安装训练包。

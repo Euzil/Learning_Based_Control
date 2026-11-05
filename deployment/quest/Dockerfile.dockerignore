@@ -1,0 +1,5 @@
+**
+!deployment/
+!deployment/quest/
+!deployment/quest/requirements-container.lock.txt
+!deployment/quest/container-entrypoint.sh

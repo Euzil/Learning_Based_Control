@@ -1,0 +1,71 @@
+name: quest-server
+x-common: &common
+  image: ${QUEST_IMAGE:-quest-server:2026-11-05}
+  network_mode: host
+  init: true
+  working_dir: /workspaces/Learning_Based_Control/wholebody_teleop_ws
+  environment: &environment
+    ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-87}
+    ROS_LOCALHOST_ONLY: "1"
+    BUILD_JOBS: ${BUILD_JOBS:-2}
+    CMAKE_BUILD_PARALLEL_LEVEL: ${BUILD_JOBS:-2}
+  volumes:
+    - ../..:/workspaces/Learning_Based_Control:ro
+    - build:/workspaces/Learning_Based_Control/wholebody_teleop_ws/build
+    - install:/workspaces/Learning_Based_Control/wholebody_teleop_ws/install
+    - log:/workspaces/Learning_Based_Control/wholebody_teleop_ws/log
+services:
+  build:
+    <<: *common
+    profiles: [tools]
+    command: [build]
+  receiver:
+    <<: *common
+    command: [receiver]
+    environment:
+      <<: *environment
+      TRACKING_HOST: ${TRACKING_HOST:-0.0.0.0}
+      TRACKING_PORT: ${TRACKING_PORT:-8000}
+      FORWARD_PORT: "9010"
+    restart: "no"
+  teleop:
+    <<: *common
+    build:
+      context: ../..
+      dockerfile: deployment/quest/Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-engineai-devel-vscode:latest}
+    command: [run, --wbc]
+    gpus: all
+    environment:
+      <<: *environment
+      DISPLAY: ${NVIDIA_DISPLAY:-:0}
+      XAUTHORITY: /run/quest-xauth
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics,display
+    volumes:
+      - ../..:/workspaces/Learning_Based_Control:ro
+      - build:/workspaces/Learning_Based_Control/wholebody_teleop_ws/build
+      - install:/workspaces/Learning_Based_Control/wholebody_teleop_ws/install
+      - log:/workspaces/Learning_Based_Control/wholebody_teleop_ws/log
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - type: bind
+        source: ${NVIDIA_XAUTHORITY:-/tmp/quest-server.Xauthority}
+        target: /run/quest-xauth
+        read_only: true
+        bind:
+          create_host_path: false
+    shm_size: 1gb
+    stop_grace_period: 20s
+    restart: "no"
+    healthcheck:
+      test: [CMD, python3, -c, "import json,urllib.request; assert json.load(urllib.request.urlopen('http://127.0.0.1:8765/health',timeout=2))['source_ready']"]
+      interval: 15s
+      timeout: 4s
+      start_period: 60s
+      retries: 3
+
+volumes:
+  build:
+  install:
+  log:

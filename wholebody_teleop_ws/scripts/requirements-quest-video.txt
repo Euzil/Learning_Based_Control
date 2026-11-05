@@ -2,3 +2,6 @@
 aiortc>=1.14,<2
 aiohttp>=3.10,<4
 numpy>=1.21,<2
+
+# HTTP snapshots for browser monitoring over SSH.
+Pillow>=10,<13

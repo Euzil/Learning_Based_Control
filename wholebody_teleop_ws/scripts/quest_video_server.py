@@ -4,6 +4,7 @@ import argparse
 import asyncio
 from fractions import Fraction
 import json
+import io
 import logging
 from pathlib import Path
 import threading
@@ -14,6 +15,7 @@ from aiortc import RTCConfiguration, RTCPeerConnection, RTCSessionDescription, V
 from aiortc.sdp import candidate_from_sdp
 from av import VideoFrame
 import numpy as np
+from PIL import Image as PillowImage
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
@@ -106,6 +108,37 @@ class VideoServer:
         self.source = source
         self.fps = fps
         self.sockets = set()
+        self.snapshot_lock = asyncio.Lock()
+        self.snapshot_sequence = None
+        self.snapshot_jpeg = None
+
+    async def monitor(self, request):
+        return web.FileResponse(Path(__file__).with_name("quest_video_monitor.html"))
+
+    @staticmethod
+    def encode_snapshot(image):
+        preview = PillowImage.fromarray(image)
+        preview.thumbnail((960, 540))
+        output = io.BytesIO()
+        preview.save(output, format="JPEG", quality=75)
+        return output.getvalue()
+
+    async def snapshot(self, request):
+        # One cached encoding per source frame, shared by all browser viewers.
+        # Keep JPEG work off the WebRTC event loop and never queue old frames.
+        async with self.snapshot_lock:
+            image, received, sequence = self.source.snapshot()
+            if image is None:
+                return web.Response(status=503, text="Waiting for camera images",
+                                    headers={"Cache-Control": "no-store"})
+            if sequence != self.snapshot_sequence:
+                self.snapshot_jpeg = await asyncio.to_thread(self.encode_snapshot, image)
+                self.snapshot_sequence = sequence
+            return web.Response(body=self.snapshot_jpeg, content_type="image/jpeg", headers={
+                "Cache-Control": "no-store",
+                "X-Frame-Sequence": str(sequence),
+                "X-Frame-Age": f"{max(0, time.monotonic() - received):.3f}",
+            })
 
     async def preview(self, request):
         return web.FileResponse(Path(__file__).with_name("quest_video_preview.html"))
@@ -268,6 +301,8 @@ def main():
     app.router.add_get("/", server.websocket)
     app.router.add_get("/health", server.health)
     app.router.add_get("/preview", server.preview)
+    app.router.add_get("/monitor", server.monitor)
+    app.router.add_get("/snapshot.jpg", server.snapshot)
     app.on_shutdown.append(server.shutdown)
     if args.telemetry_port:
         writers = set()
